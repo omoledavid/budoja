@@ -40,50 +40,50 @@
 
                                 </div>
 
-                                <div class="form-row">
-                                    <div class="form-group col">
-                                        <label for="opening_time">{{ __('levels.opening_time') }}</label>
-                                        <input id="opening_time" type="text" name="opening_time"
-                                               class="date-picker-w form-control form-control-sm timepicker date-w @error('opening_time') is-invalid @enderror"
-                                               value="{{ old('opening_time') }}">
-                                        @error('opening_time')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
+{{--                                <div class="form-row">--}}
+{{--                                    <div class="form-group col">--}}
+{{--                                        <label for="opening_time">{{ __('levels.opening_time') }}</label>--}}
+{{--                                        <input id="opening_time" type="text" name="opening_time"--}}
+{{--                                               class="date-picker-w form-control form-control-sm timepicker date-w @error('opening_time') is-invalid @enderror"--}}
+{{--                                               value="{{ old('opening_time') }}">--}}
+{{--                                        @error('opening_time')--}}
+{{--                                        <div class="invalid-feedback">--}}
+{{--                                            {{ $message }}--}}
+{{--                                        </div>--}}
+{{--                                        @enderror--}}
+{{--                                    </div>--}}
 
-                                    <div class="form-group col">
-                                        <label for="closing_time">{{ __('levels.closing_time') }}</label>
-                                        <input id="closing_time" type="text" name="closing_time"
-                                               class="form-control form-control-sm timepicker @error('closing_time') is-invalid @enderror"
-                                               value="{{ old('closing_time') }}">
-                                        @error('closing_time')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col">
-                                        <label for="cuisines">{{ __('cuisine.cuisines') }} </label>
-                                        <select id="cuisines" name="cuisines[]"
-                                                class="form-control select2 @error('cuisines') is-invalid @enderror"
-                                                multiple="multiple">
-                                            @if(!blank($cuisines))
-                                                @foreach($cuisines as $cuisine)
-                                                    <option value="{{ $cuisine->id }}">{{ $cuisine->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                        @error('cuisines')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
+{{--                                    <div class="form-group col">--}}
+{{--                                        <label for="closing_time">{{ __('levels.closing_time') }}</label>--}}
+{{--                                        <input id="closing_time" type="text" name="closing_time"--}}
+{{--                                               class="form-control form-control-sm timepicker @error('closing_time') is-invalid @enderror"--}}
+{{--                                               value="{{ old('closing_time') }}">--}}
+{{--                                        @error('closing_time')--}}
+{{--                                        <div class="invalid-feedback">--}}
+{{--                                            {{ $message }}--}}
+{{--                                        </div>--}}
+{{--                                        @enderror--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="form-row">--}}
+{{--                                    <div class="form-group col">--}}
+{{--                                        <label for="cuisines">{{ __('cuisine.cuisines') }} </label>--}}
+{{--                                        <select id="cuisines" name="cuisines[]"--}}
+{{--                                                class="form-control select2 @error('cuisines') is-invalid @enderror"--}}
+{{--                                                multiple="multiple">--}}
+{{--                                            @if(!blank($cuisines))--}}
+{{--                                                @foreach($cuisines as $cuisine)--}}
+{{--                                                    <option value="{{ $cuisine->id }}">{{ $cuisine->name }}</option>--}}
+{{--                                                @endforeach--}}
+{{--                                            @endif--}}
+{{--                                        </select>--}}
+{{--                                        @error('cuisines')--}}
+{{--                                        <div class="invalid-feedback">--}}
+{{--                                            {{ $message }}--}}
+{{--                                        </div>--}}
+{{--                                        @enderror--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
                                 <div class="form-group">
                                     <label>{{ __('levels.restaurant_address') }}</label> <span class="text-danger">*</span>
                                     <textarea name="restaurantaddress"
@@ -108,23 +108,23 @@
                                     @enderror
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="restaurant_logo">{{ __('restaurant.logo') }}</label>
-                                    <div class="custom-file">
-                                        <input name="restaurant_logo" type="file"
-                                               class="custom-file-input @error('restaurant_logo') is-invalid @enderror"
-                                               id="restaurant_logo" onchange="readURL(this,'previewImage');">
-                                        <label class="custom-file-label"
-                                               for="restaurant_logo">{{ __('Choose file') }}</label>
-                                    </div>
-                                    @if ($errors->has('restaurant_logo'))
-                                        <div class="help-block text-danger">
-                                            {{ $errors->first('restaurant_logo') }}
-                                        </div>
-                                    @endif
-                                    <img class="img-thumbnail mt-4 mb-3 admin-banner-img-hight" id="previewImage"
-                                         src="{{ asset('assets/img/default/restaurant.png') }}" alt="your image" />
-                                </div>
+{{--                                <div class="form-group">--}}
+{{--                                    <label for="restaurant_logo">{{ __('restaurant.logo') }}</label>--}}
+{{--                                    <div class="custom-file">--}}
+{{--                                        <input name="restaurant_logo" type="file"--}}
+{{--                                               class="custom-file-input @error('restaurant_logo') is-invalid @enderror"--}}
+{{--                                               id="restaurant_logo" onchange="readURL(this,'previewImage');">--}}
+{{--                                        <label class="custom-file-label"--}}
+{{--                                               for="restaurant_logo">{{ __('Choose file') }}</label>--}}
+{{--                                    </div>--}}
+{{--                                    @if ($errors->has('restaurant_logo'))--}}
+{{--                                        <div class="help-block text-danger">--}}
+{{--                                            {{ $errors->first('restaurant_logo') }}--}}
+{{--                                        </div>--}}
+{{--                                    @endif--}}
+{{--                                    <img class="img-thumbnail mt-4 mb-3 admin-banner-img-hight" id="previewImage"--}}
+{{--                                         src="{{ asset('assets/img/default/restaurant.png') }}" alt="your image" />--}}
+{{--                                </div>--}}
                                 <div class="form-group">
                                     <label for="customFile">{{ __('restaurant.background_image') }}</label>
                                     <div class="custom-file">
