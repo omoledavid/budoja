@@ -149,61 +149,22 @@
                                 <h5 class="mb-0">{{ __('restaurant.restaurant_status') }}</h5>
                             </div>
                             <div class="card-body">
-
                                 <div class="form-row">
-                                    <div class="form-group col">
-                                        <label>{{ __('levels.delivery') }}</label> <span class="text-danger">*</span>
-                                        <select name="delivery_status"
-                                                class="form-control form-control-sm-custom @error('delivery_status') is-invalid @enderror">
-                                            @foreach(trans('delivery_statuses') as $delivery_statusKey => $delivery_status)
-                                                <option value="{{ $delivery_statusKey }}"
-                                                    {{ (old('delivery_status') == $delivery_statusKey) ? 'selected' : '' }}>
-                                                    {{ $delivery_status }}
-                                                </option>
+                                    <div class="form-group col-sm-6">
+                                        <label>{{ __('levels.status') }}</label> <span class="text-danger">*</span>
+                                        <select name="status"
+                                                class="form-control form-control-sm-custom @error('status') is-invalid @enderror">
+                                            @foreach(trans('statuses') as $statusKey => $status)
+                                                <option value="{{ $statusKey }}"
+                                                    {{ (old('status') == $statusKey) ? 'selected' : '' }}>{{ $status }}</option>
                                             @endforeach
                                         </select>
-                                        @error('delivery_status')
+                                        @error('status')
                                         <div class="invalid-feedback">
                                             {{ $message }}
                                         </div>
                                         @enderror
                                     </div>
-                                    <div class="form-group col">
-                                        <label>{{ __('levels.pickup') }}</label> <span class="text-danger">*</span>
-                                        <select name="pickup_status"
-                                                class="form-control form-control-sm-custom @error('pickup_status') is-invalid @enderror">
-                                            @foreach(trans('pickup_statuses') as $pickup_statusKey => $pickup_status)
-                                                <option value="{{ $pickup_statusKey }}"
-                                                    {{ (old('pickup_status') == $pickup_statusKey) ? 'selected' : '' }}>
-                                                    {{ $pickup_status }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('pickup_status')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col">
-                                        <label>{{ __('levels.table') }}</label> <span class="text-danger">*</span>
-                                        <select name="table_status"
-                                                class="form-control form-control-sm-custom @error('table_status') is-invalid @enderror">
-                                            @foreach(trans('table_statuses') as $table_statusKey => $table_status)
-                                                <option value="{{ $table_statusKey }}"
-                                                    {{ (old('table_status') == $table_statusKey) ? 'selected' : '' }}>
-                                                    {{ $table_status }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('table_status')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-
                                     <div class="form-group col">
                                         <label>{{ __('levels.current_status') }}</label> <span class="text-danger">*</span>
                                         <select name="current_status"
@@ -222,39 +183,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-sm-6">
-                                        <label>{{ __('levels.status') }}</label> <span class="text-danger">*</span>
-                                        <select name="status"
-                                                class="form-control form-control-sm-custom @error('status') is-invalid @enderror">
-                                            @foreach(trans('statuses') as $statusKey => $status)
-                                                <option value="{{ $statusKey }}"
-                                                    {{ (old('status') == $statusKey) ? 'selected' : '' }}>{{ $status }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('status')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label>{{ __('levels.waiter_status') }}</label> <span class="text-danger">*</span>
-                                        <select name="waiter_status"
-                                                class="form-control form-control-sm-custom @error('waiter_status') is-invalid @enderror">
-                                            @foreach(trans('waiter_statuses') as $waiter_statusKey => $waiter_status)
-                                                <option value="{{ $waiter_statusKey }}"
-                                                    {{ (old('waiter_status') == $waiter_statusKey) ? 'selected' : '' }}>{{ $waiter_status }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('waiter_status')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
                             </div>
                             <div class="card-footer">
                                 <button class="btn btn-primary" type="submit">{{ __('levels.submit') }}</button>
@@ -263,42 +191,6 @@
                     </div>
 
                     <div class="col-sm-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>{{ __('restaurant.restaurant_location') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-row">
-                                    <div class="form-group col">
-                                        <label for="lat">{{ __('levels.latitude') }}</label> <span
-                                            class="text-danger">*</span>
-                                        <input type="text" name="lat" id="lat"
-                                               class="form-control form-control-sm @error('lat') is-invalid @enderror"
-                                               value="{{ old('lat') }}">
-                                        @error('lat')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col">
-                                        <label for="long">{{ __('levels.longitude') }}</label> <span
-                                            class="text-danger">*</span>
-                                        <input type="text" id="long" name="long"
-                                               class="form-control form-control-sm @error('long') is-invalid @enderror"
-                                               value="{{ old('long') }}">
-                                        @error('long')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div id="googleMap"></div>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="card">
                             <div class="card-header">

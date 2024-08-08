@@ -17,10 +17,6 @@
                     <div class="card-header d-flex justify-content-between">
                         <a href="{{ route('admin.restaurants.create') }}" class="btn btn-icon icon-left btn-primary"><i
                                 class="fas fa-plus"></i> {{ __('restaurant.add_restaurant') }}</a>
-                        @if (auth()->user()->myrole == 1)
-                        <a href="{{ route('admin.import-restaurant') }}" class="btn btn-icon icon-left btn-success">
-                            {{ __('restaurant.import_restaurant') }}</a>
-                        @endif
                     </div>
                     @endcan
 

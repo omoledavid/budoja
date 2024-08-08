@@ -69,25 +69,25 @@
 
                                 <input type="submit" class="form-btn" value="Login">
 
-                                @if (setting('facebook_key') || setting('google_key'))
-                                    <div class="auth-divide"><span>{{ __('or login with ') }}</span></div>
-                                @endif
+    {{--                                @if (setting('facebook_key') || setting('google_key'))--}}
+    {{--                                    <div class="auth-divide"><span>{{ __('or login with ') }}</span></div>--}}
+    {{--                                @endif--}}
 
-                                <nav class="auth-sync">
-                                    @if (setting('google_key'))
-                                        <a href="{{ route('social-login', 'google') }}">
-                                            <img src="{{ asset('frontend/images/social/google.png') }}" alt="social">
-                                            <span>{{ __('Google') }}</span>
-                                        </a>
-                                    @endif
+    {{--                                <nav class="auth-sync">--}}
+    {{--                                    @if (setting('google_key'))--}}
+    {{--                                        <a href="{{ route('social-login', 'google') }}">--}}
+    {{--                                            <img src="{{ asset('frontend/images/social/google.png') }}" alt="social">--}}
+    {{--                                            <span>{{ __('Google') }}</span>--}}
+    {{--                                        </a>--}}
+    {{--                                    @endif--}}
 
-                                    @if (setting('facebook_key'))
-                                        <a href="{{ route('social-login', 'facebook') }}">
-                                            <img src="{{ asset('frontend/images/social/facebook.png') }}" alt="social">
-                                            <span>{{ __('Facebook ') }}</span>
-                                        </a>
-                                    @endif
-                                </nav>
+    {{--                                    @if (setting('facebook_key'))--}}
+    {{--                                        <a href="{{ route('social-login', 'facebook') }}">--}}
+    {{--                                            <img src="{{ asset('frontend/images/social/facebook.png') }}" alt="social">--}}
+    {{--                                            <span>{{ __('Facebook ') }}</span>--}}
+    {{--                                        </a>--}}
+    {{--                                    @endif--}}
+    {{--                                </nav>--}}
                             </form>
                         </div>
 
