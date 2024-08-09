@@ -270,4 +270,7 @@
 <h1>
     Api in progress
 </h1>
+@php 
+ phpinfo()
+ @endphp
 

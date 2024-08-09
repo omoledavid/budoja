@@ -42,30 +42,41 @@ class OrderController extends Controller
 
 
     public function index()
-    {
+{
+    $response = Order::where(['user_id' => auth()->user()->id])
+                      ->orderBy('id', 'desc')
+                      ->with('items')
+                      ->get();
 
-        $response = Order::where(['user_id' => auth()->user()->id])->orderBy('id', 'desc')->with('items')->get();
-        $response->map(function ($post) {
-            $post['status_name']         = trans('order_status.' . $post->status);
-            $post['order_code']          = $post->order_code;
-            $post['address']             = orderAddress($post->address);
-            $post['order_type']          =  (int)$post->order_type;
-            $post['order_type_name']     =  $post->getOrderType;
-            $post['payment_method_name'] = trans('payment_method.' . $post->payment_method);
-            $post['created_at_convert']  = food_date_format($post->created_at);
-            $post['updated_at_convert']  = food_date_format($post->updated_at);
-            $post['deliveryBoy']         = $post->delivery_boy_id == null?null:new UserResource($post->delivery);
-
-            foreach ($post['items'] as $itemKey => $item) {
-                $post['items'][$itemKey]['created_at_convert'] = food_date_format($post->created_at);
-                $post['items'][$itemKey]['updated_at_convert'] = food_date_format($post->updated_at);
-                $post['items'][$itemKey]['menuItem']['image']  = $item['menuItem']->image;
-            }
-            return $post;
-        });
-
-        return new OrderResource($response);
+    if ($response->isEmpty()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'No order found',
+        ], 404);
     }
+
+    $response->map(function ($post) {
+        $post['status_name']         = trans('order_status.' . $post->status);
+        $post['order_code']          = $post->order_code;
+        $post['address']             = orderAddress($post->address);
+        $post['order_type']          = (int)$post->order_type;
+        $post['order_type_name']     = $post->getOrderType;
+        $post['payment_method_name'] = trans('payment_method.' . $post->payment_method);
+        $post['created_at_convert']  = food_date_format($post->created_at);
+        $post['updated_at_convert']  = food_date_format($post->updated_at);
+        $post['deliveryBoy']         = $post->delivery_boy_id == null ? null : new UserResource($post->delivery);
+
+        foreach ($post['items'] as $itemKey => $item) {
+            $post['items'][$itemKey]['created_at_convert'] = food_date_format($post->created_at);
+            $post['items'][$itemKey]['updated_at_convert'] = food_date_format($post->updated_at);
+            $post['items'][$itemKey]['menuItem']['image']  = $item['menuItem']->image;
+        }
+        return $post;
+    });
+
+    return new OrderResource($response);
+}
+
 
     public function show($id)
     {

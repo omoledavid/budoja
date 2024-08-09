@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\v1\NotificationOrderController;
 use App\Http\Controllers\Api\v1\OrderController;
 use App\Http\Controllers\Api\v1\OtpLoginController;
 use App\Http\Controllers\Api\v1\PopularRestaurantController;
+use App\Http\Controllers\Api\v1\ProductController;
 use App\Http\Controllers\Api\v1\PushNotificationController;
 use App\Http\Controllers\Api\v1\RequestWithdrawController;
 use App\Http\Controllers\Api\v1\ReservationController;
@@ -88,11 +89,17 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('cuisine/{id}',                                  [CuisineController::class, 'index']); //done
     Route::get('cuisine/{id}/show',                             [CuisineController::class, 'show']); //done
 
+    //restaurant
+    Route::get('restaurant',                                   [RestaurantController::class, 'restaurant']); //done
     Route::post('restaurant',                                   [RestaurantController::class, 'store']); //done
+    Route::put('restaurant/{restaurant}',                                   [RestaurantController::class, 'update']); //done
     Route::get('popular-restaurant',                            [PopularRestaurantController::class, 'index']); //done
     Route::get('/restaurant/index/{id?}/{status?}/{applied?}',  [RestaurantController::class, 'index']); //done
     Route::get('restaurant/{id}',                               [RestaurantController::class, 'show']); //done
     Route::get('/search',                                       [SearchController::class, 'index']); //done
+
+    //product
+    Route::apiResource('product', ProductController::class);
 
     Route::post('coupon',                                       [CouponController::class, 'apply']);
 
@@ -120,6 +127,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('reservation/check',                            [ReservationController::class, 'check']); //done
     Route::put('reservation/status/{id}',                       [ReservationController::class, 'update']); //done
 
+    //orders
     Route::get('orders',                                        [OrderController::class, 'index']); //done
     Route::post('orders',                                       [OrderController::class, 'store']); //done
     Route::put('orders/{id}',                                   [OrderController::class, 'update']); //done

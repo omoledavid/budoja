@@ -54,6 +54,14 @@ class RestaurantController extends BackendController
             ]);
         }
     }
+    public function restaurant(){
+        $user = auth()->user();
+        $restaurant = Restaurant::where('user_id', $user->id)->select('id', 'user_id', 'name', 'description', 'address', 'status', 'created_at')->first();
+        return response()->json([
+            'status' => true,
+            'data' => $restaurant,
+        ]);
+    }
 
 
     public function show($id)
@@ -143,5 +151,31 @@ class RestaurantController extends BackendController
             'data'    => $restaurant,
             'message' => 'The data inserted successfully.'
         ]);
+    }
+
+    public function update(RestaurantStoreRequest $request, $id)
+    {
+        $restaurant = Restaurant::restaurantowner()->findOrFail($id);
+
+        $restaurant->user_id         = auth()->id();
+        $restaurant->name            = $request->name;
+        $restaurant->description     = $request->description;
+        $restaurant->address         = $request->address;
+        $restaurant->applied         = true;
+        $restaurant->save();
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $this->deleteMedia('restaurant', $restaurant->id);
+            $restaurant->addMediaFromRequest('image')->toMediaCollection('restaurant');
+        }
+        if ($request->hasFile('restaurant_logo') && $request->file('restaurant_logo')->isValid()) {
+            $this->deleteMedia('restaurant_logo', $restaurant->id);
+            $restaurant->addMediaFromRequest('restaurant_logo')->toMediaCollection('restaurant_logo');
+        }
+        return response()->json([
+            'status' => true,
+            'data' => $restaurant,
+            'message' => 'Restaurant details updated successfully'
+        ]); 
     }
 }

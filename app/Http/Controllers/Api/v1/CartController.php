@@ -68,14 +68,14 @@ class CartController extends FrontendController
     public function store( Request $request )
     {
         $requestArray = [
-            'menu_id'         => 'required|numeric',
+            'product_id'         => 'required|numeric',
             'variations'      => 'nullable|numeric',
             'options.*'       => 'nullable',
             'instructions'       => 'instructions',
         ];
         $validator    = Validator::make($request->all(), $requestArray);
         if ( !$validator->fails() ) {
-            $menu_id = $request->menu_id;
+            $menu_id = $request->product_id;
             $menuItem     = MenuItem::findOrfail($menu_id);
             if ( !blank($menuItem) ) {
                 if ( session('session_cart_restaurant_id') != $menuItem->restaurant_id ) {
@@ -127,8 +127,9 @@ class CartController extends FrontendController
                 ];
                 Cart::add($cartItem);
             }
+            return $this->successresponse(['status'=>200,'message'=>'Added to cart successfully']);
         }
-        return $this->successresponse(['status'=>200,'message'=>'Added to cart successfully']);
+        return $this->errorResponse('No product added to cart', 400);
     }
 
     public function remove($id)

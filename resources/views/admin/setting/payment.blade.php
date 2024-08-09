@@ -18,17 +18,17 @@
                                     id="stripe" data-toggle="pill" href="#stripetab" role="tab"
                                     aria-controls="stripetab" aria-selected="true">{{ __('setting.stripe') }}</a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link {{ old('settingtypepayment', setting('settingtypepayment')) == 'razorpay' ? 'active' : '' }}"
                                     id="razorpay" data-toggle="pill" href="#razorpaytab" role="tab"
                                     aria-controls="razorpaytab" aria-selected="false">{{ __('setting.razorpay') }}</a>
-                            </li>
+                            </li> --}}
                             <li class="nav-item">
                                 <a class="nav-link {{ old('settingtypepayment', setting('settingtypepayment')) == 'paystack' ? 'active' : '' }}"
                                     id="paystack" data-toggle="pill" href="#paystacktab" role="tab"
                                     aria-controls="paystacktab" aria-selected="false">{{ __('setting.paystack') }}</a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link {{ old('settingtypepayment', setting('settingtypepayment')) == 'paypal' ? 'active' : '' }}"
                                     id="paypal" data-toggle="pill" href="#paypaltab" role="tab"
                                     aria-controls="paypaltab" aria-selected="false">{{ __('setting.paypal') }}</a>
@@ -48,7 +48,7 @@
                                 <a class="nav-link {{ old('settingtypepayment', setting('settingtypepayment')) == 'sslcommerz' ? 'active' : '' }}"
                                     id="sslcommerz" data-toggle="pill" href="#sslcommerztab" role="tab"
                                     aria-controls="sslcommerztab" aria-selected="false">{{ __('setting.sslcommerz') }}</a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </div>
                     <div class="col-xl-9 col-md-8">

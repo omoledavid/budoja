@@ -152,43 +152,13 @@
                                     <p><b>{{ __('levels.name') }}: </b> {{ $restaurant->name }}</p>
                                 </div>
                                 <div class="single-profile">
-                                    <p><b>{{ __('levels.latitude') }}: </b> {{ $restaurant->lat }}</p>
-                                </div>
-                                <div class="single-profile">
-                                    <p><b>{{ __('levels.longitude') }}: </b> {{ $restaurant->long }}</p>
-                                </div>
-                                <div class="single-profile">
                                     <p><b>{{ __('levels.current_status') }}: </b>
                                         {{ trans('current_statuses.' . $restaurant->current_status) }}</p>
                                 </div>
                                 <div class="single-profile">
-                                    <p><b>{{ __('levels.waiter_status') }}: </b>
-                                        {{ trans('waiter_statuses.' . $restaurant->waiter_status) }}</p>
-                                </div>
-                                <div class="single-profile">
                                     <p><b>{{ __('levels.status') }}: </b> {{ trans('statuses.' . $restaurant->status) }}</p>
                                 </div>
-                                <div class="single-profile">
-                                    <p><b>{{ __('levels.delivery_status') }}: </b>
-                                        {{ trans('delivery_statuses.' . $restaurant->delivery_status) }}</p>
-                                </div>
-                                <div class="single-profile">
-                                    <p><b>{{ __('levels.pickup_status') }}: </b>
-                                        {{ trans('pickup_statuses.' . $restaurant->pickup_status) }}</p>
-                                </div>
-                                <div class="single-profile">
-                                    <p><b>{{ __('levels.table_status') }}: </b>
-                                        {{ trans('table_statuses.' . $restaurant->table_status) }}</p>
-                                </div>
-                                <div class="single-profile">
-                                    <p><b>{{ __('levels.opening_time') }}: </b>
-                                        {{ date('h:i A', strtotime($restaurant->opening_time)) }}</p>
-                                </div>
-                                <div class="single-profile">
-                                    <p><b>{{ __('levels.closing_time') }}: </b>
-                                        {{ date('h:i A', strtotime($restaurant->closing_time)) }}</p>
-                                </div>
-                                @if (isset($restaurant->cuisines))
+                                {{-- @if (isset($restaurant->cuisines))
                                     <div class="single-full-profile">
                                         <p><b>{{ __('cuisine.cuisines') }}: </b>
                                             @foreach ($restaurant->cuisines as $cuisine)
@@ -199,7 +169,7 @@
                                             @endforeach
                                         </p>
                                     </div>
-                                @endif
+                                @endif --}}
                                 <div class="single-full-profile">
                                     <p><b>{{ __('levels.address') }}: </b> {{ $restaurant->address }}</p>
                                 </div>
@@ -212,7 +182,7 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <h3>{{ __('restaurant.menu_items') }}</h3>
+                            <h3>Products</h3>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
