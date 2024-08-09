@@ -42,6 +42,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        return 'hello';
         $validator = new MenuItemRequest();
         $validator = Validator::make($request->all(), $validator->rules());
         if (!$validator->fails()){
