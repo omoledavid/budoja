@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Notifications\NewShopOrderCreated;
 use App\Http\Resources\v1\OrderApiResource;
 use App\Http\Requests\Api\OrderStoreRequest;
+use App\Models\Cart;
 
 class OrderController extends Controller
 {
@@ -109,37 +110,21 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), $validator->rules());
 
         if (!$validator->fails()) {
-            $orderItems = json_decode($request->items);
-
+            $cart = Cart::where('user_id', auth()->id())->with('product')->get();
+            $orderItems = $cart;
+            
             $items = [];
             if (!blank($orderItems)) {
                 $i                      = 0;
                 $menuItemVariationId = 0;
                 $options                = [];
                 foreach ($orderItems as $item) {
-                    $variation = [];
-                    if ((int) $item->menu_item_variation_id) {
-                        $menuItemVariationId = $item->menu_item_variation_id;
-                        $getVariation           = MenuItemVariation::find($item->menu_item_variation_id);
-
-                        if (!blank($getVariation)) {
-                            $variation = ['id' => $getVariation->id, 'name' => $getVariation->name, 'price' => $getVariation->price];
-                        }
-                    }
-
-                    if (isset($item->options) && !empty($item->options)) {
-                        $options = json_decode(json_encode($item->options), true);
-                    }
-
                     $items[$i] = [
-                        'restaurant_id'          => $request->restaurant_id,
-                        'menu_item_variation_id' => $menuItemVariationId,
-                        'menu_item_id'           => $item->menuItem_id,
-                        'unit_price'             => (float) $item->unit_price,
-                        'quantity'               => (int) $item->quantity,
-                        'discounted_price'       => (float) $item->discounted_price,
-                        'variation'              => $variation,
-                        'options'                => $options,
+                        'restaurant_id'          => $item->product->restaurant_id,
+                        'menu_item_id'           => $item->product->id,
+                        'unit_price'             => (float) $item->product->unit_price,
+                        'quantity'               => (int) $item->qty,
+                        'discounted_price'       => (float) $item->product->discounted_price,
                         'instructions'           => $item->instructions,
                     ];
                     $i++;
@@ -149,12 +134,14 @@ class OrderController extends Controller
             $request->request->add([
                 'items'           => $items,
                 'order_type'      => $request->order_type,
-                'restaurant_id'   => $request->restaurant_id,
+                'restaurant_id'   => $items[0]['restaurant_id'],
                 'user_id'         => auth()->user()->id,
-                'total'           => $request->total,
+                'mobile'          => auth()->user()->phone,
+                'total'           => $items[0]['unit_price'] * count($items),
                 'delivery_charge' => $request->delivery_charge,
             ]);
-
+            
+            
             if(($request->paid_amount == '' || $request->paid_amount == 0) || $request->payment_method == PaymentMethod::CASH_ON_DELIVERY) {
                 $request->request->add([
                     'paid_amount'           => 0,
@@ -168,19 +155,12 @@ class OrderController extends Controller
                     'payment_status'        => PaymentStatus::PAID
                 ]);
             }
-
+            
             $orderService = app(OrderService::class)->order($request);
+            
 
             if ($orderService->status) {
                 $order = Order::find($orderService->order_id);
-
-                try {
-                    app(PushNotificationService::class)->sendNotificationOrder($order,$order->restaurant->user,'restaurant');
-                    app(PushNotificationService::class)->sendNotificationOrder($order, $order->user,'customer');
-                } catch (\Exception $exception) {
-                    //
-                }
-
 
                 return response()->json([
                     'status'  => 200,
@@ -303,11 +283,13 @@ class OrderController extends Controller
             if ( !blank($order) ) {
                 if($request->payment_method != PaymentMethod::CASH_ON_DELIVERY && $order->payment_status != PaymentStatus::PAID) {
                     if ( $request->payment_method != PaymentMethod::WALLET) {
+                        return 'hei';
                         app(TransactionService::class)->addFund(0, $order->user->balance_id, $order->payment_method, $order->total, $order->id);
                     }
                     if ( $this->adminBalanceId != $order->user->balance_id ) {
                         app(TransactionService::class)->payment($order->user->balance_id, $this->adminBalanceId, $order->total, $order->id);
                     }
+                    return 'wait here';
 
                     $order->paid_amount    = $order->total;
                     $order->payment_method = $request->payment_method;

@@ -437,13 +437,7 @@ class OrderService
                     'apartment' => ''
                 ]);
             }else {
-                $address = Address::find($data['address']);
-                $latitude = $address->latitude;
-                $longitude = $address->longitude;
-                $address = json_encode([
-                    'address' => $address->address,
-                    'apartment' => $address->apartment
-                ]);
+                $address = $data['address'];
             }
         }
         $order = [
@@ -451,9 +445,9 @@ class OrderService
             'restaurant_id'   => $data['restaurant_id'],
             'total'           => $data['total'] + $data['delivery_charge'],
             'sub_total'       => $data['total'],
-            'delivery_charge' => $data['delivery_charge'],
+            'delivery_charge' => 0,
             'status'          => OrderStatus::PENDING,
-            'order_type'      => $data['order_type'],
+            'order_type'      => 'web',
             'address'         => $address,
             'mobile'          => $data['mobile'],
             'lat'             => $latitude,
@@ -502,8 +496,6 @@ class OrderService
                     'unit_price'                => $item['unit_price'],
                     'discounted_price'          => $item['discounted_price'],
                     'item_total'                => ($item['unit_price'] * $item['quantity']),
-                    'menu_item_variation_id' => $item['menu_item_variation_id'],
-                    'options'                   => json_encode($item['options']),
                     'instructions'              => $item['instructions'],
                     'options_total'             => $optionTotal,
                     'created_at'                => date('Y-m-d H:i:s'),

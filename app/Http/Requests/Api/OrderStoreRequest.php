@@ -48,14 +48,7 @@ class OrderStoreRequest extends FormRequest
             ];
         } else {
             return [
-                'items'           => ['required', 'json'],
-                'delivery_charge' => ['required', 'numeric'],
-                'mobile'          => ['required'],
                 'address'         => ['required', 'string'],
-                'restaurant_id'         => ['required'],
-                'lat'             => ['required'],
-                'long'            => ['required'],
-                'total'           => ['required'],
             ];
         }
     }

@@ -174,7 +174,7 @@ class RestaurantController extends BackendController
         }
         return response()->json([
             'status' => true,
-            'data' => $restaurant,
+            'data' => new RestaurantResource($restaurant),
             'message' => 'Restaurant details updated successfully'
         ]); 
     }

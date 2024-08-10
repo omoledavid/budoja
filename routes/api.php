@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\v1\Auth\MeController;
 use App\Http\Controllers\Api\v1\Auth\RegisterController;
 use App\Http\Controllers\Api\v1\Auth\SocialLoginController;
 use App\Http\Controllers\Api\v1\BannerController;
+use App\Http\Controllers\Api\v1\BasicController;
 use App\Http\Controllers\Api\v1\CartController;
 use App\Http\Controllers\Api\v1\CategoryController;
 use App\Http\Controllers\Api\v1\CouponController;
@@ -48,6 +49,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'v1'], function () {
+    //generals
+    Route::get('products', [BasicController::class, 'index']);
+    Route::get('products/{id}', [BasicController::class, 'show']);
 
     Route::post('login',                                        [LoginController::class, 'action']);
     Route::post('social-login',                                 [SocialLoginController::class, 'action']);
