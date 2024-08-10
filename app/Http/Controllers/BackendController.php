@@ -8,6 +8,6 @@ class BackendController extends Controller
 
     public function __construct()
     {
-        $this->data['siteTitle'] = 'Dashboard';
+        // $this->data['siteTitle'] = 'Dashboard';
     }
 }

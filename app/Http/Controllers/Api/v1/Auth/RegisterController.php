@@ -60,6 +60,8 @@ class RegisterController extends Controller
             'email'      => $request->get('email'),
             'username'   => $username,
             'phone'      => $request->get('phone'),
+            'address'      => $request->get('address'),
+            'city'      => $request->get('city'),
             'password'   => bcrypt($request->get('password')),
         ];
 

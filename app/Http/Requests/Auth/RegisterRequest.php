@@ -30,6 +30,8 @@ class RegisterRequest extends FormRequest
             'name'                  => 'required|max:40',
             'phone'                 => 'required|max:40',
             'role'                 => 'required|nullable|numeric',
+            'address'                 => 'nullable',
+            'city'                 => 'nullable',
             'password'              => 'required|string|min:6|confirmed',
             'password_confirmation' => 'required',
         ];

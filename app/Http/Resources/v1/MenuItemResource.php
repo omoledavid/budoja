@@ -17,15 +17,15 @@ class MenuItemResource extends JsonResource
         return [
             "id"                => $this->id,
             "name"              => $this->name,
-            "slug"              => $this->slug,
-            "menu_number"       => $this->menu_number,
+            // "slug"              => $this->slug,
+            // "menu_number"       => $this->menu_number,
             "unit_price"        => $this->unit_price,
             "discount_price"    => $this->discount_price,
-            "currency_code"     => setting('currency_code'),
+            // "currency_code"     => setting('currency_code'),
             "image"             => $this->image,
             "description"       => strip_tags($this->description),
-            'variations'      => MenuItemVariationResource::collection($this->variations),
-            'options'         => $this->options!=null?MenuItemOptionResource::collection($this->options):[],
+            // 'variations'      => MenuItemVariationResource::collection($this->variations),
+            // 'options'         => $this->options!=null?MenuItemOptionResource::collection($this->options):[],
         ];
     }
 

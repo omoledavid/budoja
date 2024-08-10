@@ -32,7 +32,6 @@ class RestaurantController extends BackendController
     public function __construct(RestaurantService $restaurantService)
     {
         parent::__construct();
-        $this->data['siteTitle'] = 'Restaurants';
         $this->middleware('auth:api');
         $this->restaurantService = $restaurantService;
     }
@@ -56,7 +55,8 @@ class RestaurantController extends BackendController
     }
     public function restaurant(){
         $user = auth()->user();
-        $restaurant = Restaurant::where('user_id', $user->id)->select('id', 'user_id', 'name', 'description', 'address', 'status', 'created_at')->first();
+        $data = Restaurant::where('user_id', $user->id)->first();
+        $restaurant = new RestaurantResource($data);
         return response()->json([
             'status' => true,
             'data' => $restaurant,
@@ -70,12 +70,12 @@ class RestaurantController extends BackendController
         $rating      = new RatingsService();
         $ratingArray = $rating->avgRating($this->data['restaurant']->id);
         $RestaurantRatings = RestaurantRating::where(['restaurant_id' => $this->data['restaurant']->id, 'status' => RatingStatus::ACTIVE])->get();
-        $this->data['timeSlots'] = TimeSlot::where(['restaurant_id' => $this->data['restaurant']->id])->get();
+        // $this->data['timeSlots'] = TimeSlot::where(['restaurant_id' => $this->data['restaurant']->id])->get();
 
         $this->data['restaurant'] = new RestaurantResource($this->data['restaurant']);
-        $this->data['menuItems'] = MenuItemResource::collection($this->data['restaurant']->menuItems);
+        // $this->data['products'] = MenuItemResource::collection($this->data['restaurant']->menuItems);
         $this->data['reviews']    = RatingResource::collection($RestaurantRatings);
-        $this->data['countUser']   = $ratingArray['countUser'];
+        // $this->data['countUser']   = $ratingArray['countUser'];
         $this->data['avgRating']   = $ratingArray['avgRating'];
 
 
