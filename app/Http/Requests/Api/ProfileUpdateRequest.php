@@ -31,13 +31,13 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name'     => ['required', 'string', 'max:120'],
-            'email'    => [
-                'required',
-                'string',
-                Rule::unique("users", "email")->ignore($this->id),
-                'email',
-                'max:100',
-            ],
+            // 'email'    => [
+            //     'required',
+            //     'string',
+            //     Rule::unique("users", "email")->ignore($this->id),
+            //     'email',
+            //     'max:100',
+            // ],
             'username' => request('username') ? [
                 'required',
                 'string',

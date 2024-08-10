@@ -20,6 +20,8 @@ use App\Http\Services\ComplaintService;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Api\ProfileUpdateRequest;
 use App\Http\Requests\Api\PasswordUpdateRequest;
+use App\Http\Resources\v1\RatingResource;
+use App\Models\Restaurant;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class MeController extends Controller
@@ -101,7 +103,6 @@ class MeController extends Controller
 
         $profile->first_name = $firstName;
         $profile->last_name  = $lastName;
-        $profile->email      = $request->get('email');
         $profile->phone      = $request->get('phone');
         $profile->address    = $request->get('address');
         if ($request->username) {
@@ -189,11 +190,12 @@ class MeController extends Controller
                 'message' => 'Review not found.',
             ], 401);
         }
+        $data = new RatingResource($ratingReview);
 
 
         return response()->json([
             'status' => 200,
-            'data'   => $ratingReview,
+            'data'   => $data,
         ], 200);
     }
 
@@ -205,6 +207,13 @@ class MeController extends Controller
                 'status'  => 422,
                 'message' => $validator->errors(),
             ], 422);
+        }
+        $restaurant = Restaurant::where('id', $request->restaurant_id)->first();
+        if($restaurant->user_id === auth()->id()){
+            return response()->json([
+                'status' => false,
+                'message' => 'You can\'t rate your own restaurant'
+            ], 400);
         }
 
         $restaurantRating = RestaurantRating::where(['user_id' => auth()->id(), 'restaurant_id' => $request->restaurant_id])->first();
@@ -223,10 +232,12 @@ class MeController extends Controller
             $restaurantRating->status     = RatingStatus::ACTIVE;
             $restaurantRating->save();
         }
+        $data = new RatingResource($restaurantRating);
 
         return response()->json([
             'status'  => 200,
             'message' => 'You rating successfully saved.',
+            'data' => $data,
         ], 200);
     }
 
@@ -235,7 +246,7 @@ class MeController extends Controller
         return [
             'rating'           => 'required|numeric|min:1|max:5',
             'review'           => 'required|string|max:500',
-            'user_id'          => 'required|numeric',
+            // 'user_id'          => 'required|numeric',
             'restaurant_id'    => 'required|numeric',
         ];
     }

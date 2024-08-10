@@ -38,19 +38,18 @@ class MenuItemService
         $menuItem->status         = $request->get('status');
         $menuItem->save();
         $menuItem->categories()->sync($request->get('categories'));
-
+        
         return $menuItem;
     }
-
+    
     public function media($menuItem)
     {
-        if (!blank(request()->input('document'))) {
-            foreach (request()->input('document') as $file) {
-                $menuItem->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('menu-items');
-            }
+        if (!blank(request()->file('image'))) {
+            $menuItem->media()->delete();
+                $menuItem->addMedia(request()->file('image'))->toMediaCollection('menu-items');
         }
     }
-
+    
     public function update(Request $request, $menuItem) : void
     {
         $menuItem->restaurant_id  = $request->get('restaurant_id');
@@ -62,14 +61,12 @@ class MenuItemService
         $menuItem->save();
         $menuItem->categories()->sync($request->get('categories'));
     }
-
+    
     public function updateMedia($menuItem)
     {
-        if (!blank(request()->input('document'))) {
+        if (!blank(request()->file('image'))) {
             $menuItem->media()->delete();
-            foreach (request()->input('document') as $file) {
-                $menuItem->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('menu-items');
-            }
+                $menuItem->addMedia(request()->file('image'))->toMediaCollection('menu-items');
         }
     }
 

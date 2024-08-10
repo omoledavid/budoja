@@ -25,24 +25,18 @@ class ProductController extends Controller
     public function index(){
         // Product is menuitem
         $user = auth()->user();
-        $products = MenuItem::where('creator_id', $user->id)->select('id','restaurant_id', 'name', 'description', 'status', 'created_at')->paginate(10);
-    
-        if ($products->isEmpty()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'No product found',
-            ]);
-        }
+        $products = MenuItem::where('creator_id', $user->id)->select('id','restaurant_id', 'name', 'description', 'status', 'created_at')->get();
+
+        $data = MenuItemResource::collection($products);
     
         return response()->json([
             'status' => true,
-            'data' => $products,
+            'data' => $data,
         ]);
     }
 
     public function store(Request $request)
     {
-        return 'hello';
         $validator = new MenuItemRequest();
         $validator = Validator::make($request->all(), $validator->rules());
         if (!$validator->fails()){
@@ -60,7 +54,10 @@ class ProductController extends Controller
                     'trace' => $e->getTrace(),
                 ]);
             }
-            return $this->successResponse('Product saved');
+            return response()->json([
+                'status' => true,
+                'data' => $menuItem
+            ]);
 
         }else {
             return response()->json([
@@ -110,7 +107,10 @@ class ProductController extends Controller
                     'trace' => $e->getTrace(),
                 ]);
             }
-            return $this->successResponse('Product updated');
+            return response()->json([
+                'status' => true,
+                'data' => new MenuItemResource($menuItem)
+            ]);
         }
         return $this->errorResponse('Invalid request',401);
     }

@@ -34,7 +34,7 @@ class MenuItemRequest extends FormRequest
             'quantity'       => 'nullable|numeric|gte:0',
             'status'         => 'required|numeric',
             'description'    => 'nullable|string|max:1000',
-            'image'          => 'image|mimes:jpeg,png,jpg|max:4096',
+            // 'image'          => 'required|image|mimes:jpeg,png,jpg|max:4096',
         ];
     }
 

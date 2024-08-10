@@ -24,6 +24,8 @@ class MenuItemResource extends JsonResource
             // "currency_code"     => setting('currency_code'),
             "image"             => $this->image,
             "description"       => strip_tags($this->description),
+            "restaurant_id"     => $this->restaurant_id,
+            "category" =>  CategoryResource::collection($this->categories),
             // 'variations'      => MenuItemVariationResource::collection($this->variations),
             // 'options'         => $this->options!=null?MenuItemOptionResource::collection($this->options):[],
         ];
