@@ -154,6 +154,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('admin-commission-report',                       [AdminCommissionReportController::class, 'index']); //done
     Route::post('admin-commission-report',                      [AdminCommissionReportController::class, 'index']); //done
 
+    //cart
     Route::get('cart',                                          [CartController::class, 'index']);
     Route::post('cart',                                         [CartController::class, 'store']);
     Route::get('cart/{id}',                                     [CartController::class, 'remove']);
