@@ -25,7 +25,7 @@ class ProductController extends Controller
     public function index(){
         // Product is menuitem
         $user = auth()->user();
-        $products = MenuItem::where('creator_id', $user->id)->select('id','restaurant_id', 'name', 'description', 'status', 'created_at')->get();
+        $products = MenuItem::where('creator_id', $user->id)->get();
 
         $data = MenuItemResource::collection($products);
     
