@@ -43,53 +43,51 @@ class OrderController extends Controller
 
 
     public function index()
-{
-    $response = Order::where(['user_id' => auth()->user()->id])
-                      ->orderBy('id', 'desc')
-                      ->with('items')
-                      ->get();
+    {
+        $response = Order::where(['user_id' => auth()->user()->id])
+            ->select('id', 'user_id', 'total', 'payment_status', 'paid_amount', 'address', 'mobile', 'restaurant_id','product_received', 'payment_method', 'created_at')
+            ->orderBy('id', 'desc')
+            ->with('items')
+            ->get();
 
-    if ($response->isEmpty()) {
-        return response()->json([
-            'status' => false,
-            'message' => 'No order found',
-        ], 404);
-    }
-
-    $response->map(function ($post) {
-        $post['status_name']         = trans('order_status.' . $post->status);
-        $post['order_code']          = $post->order_code;
-        $post['address']             = orderAddress($post->address);
-        $post['order_type']          = (int)$post->order_type;
-        $post['order_type_name']     = $post->getOrderType;
-        $post['payment_method_name'] = trans('payment_method.' . $post->payment_method);
-        $post['created_at_convert']  = food_date_format($post->created_at);
-        $post['updated_at_convert']  = food_date_format($post->updated_at);
-        $post['deliveryBoy']         = $post->delivery_boy_id == null ? null : new UserResource($post->delivery);
-
-        foreach ($post['items'] as $itemKey => $item) {
-            $post['items'][$itemKey]['created_at_convert'] = food_date_format($post->created_at);
-            $post['items'][$itemKey]['updated_at_convert'] = food_date_format($post->updated_at);
-            $post['items'][$itemKey]['menuItem']['image']  = $item['menuItem']->image;
+        if ($response->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No order found',
+            ], 404);
         }
-        return $post;
-    });
 
-    return new OrderResource($response);
-}
+        $response->map(function ($post) {
+            $post['status_name']         = trans('order_status.' . $post->status);
+            $post['order_code']          = $post->order_code;
+            $post['address']             = orderAddress($post->address);
+            // $post['order_type']          = (int)$post->order_type;
+            // $post['order_type_name']     = $post->getOrderType;
+            $post['payment_method_name'] = trans('payment_method.' . $post->payment_method);
+
+            foreach ($post['items'] as $itemKey => $item) {
+                $post['items'][$itemKey]['created_at_convert'] = food_date_format($post->created_at);
+                $post['items'][$itemKey]['updated_at_convert'] = food_date_format($post->updated_at);
+                $post['items'][$itemKey]['menuItem']['image']  = $item['menuItem']->image;
+            }
+            return $post;
+        });
+
+        return new OrderResource($response);
+    }
 
 
     public function show($id)
     {
-        try{
+        try {
             $response = Order::where(['id' => $id, 'user_id' => auth()->user()->id])->latest()->with('items', 'invoice.transactions')->first();
 
-            if($response == null){
-                return $this->successResponse(['status'=> 200, 'message' => 'No available orders']);
+            if ($response == null) {
+                return $this->successResponse(['status' => 200, 'message' => 'No available orders']);
             }
-            $order= new OrderApiResource($response);
-            return $this->successResponse(['status'=> 200, 'data' => $order]);
-        } catch (\Exception $e){
+            $order = new OrderApiResource($response);
+            return $this->successResponse(['status' => 200, 'data' => $order]);
+        } catch (\Exception $e) {
             return response()->json([
                 'exception' => get_class($e),
                 'message' => $e->getMessage(),
@@ -112,7 +110,7 @@ class OrderController extends Controller
         if (!$validator->fails()) {
             $cart = Cart::where('user_id', auth()->id())->with('product')->get();
             $orderItems = $cart;
-            
+
             $items = [];
             if (!blank($orderItems)) {
                 $i                      = 0;
@@ -140,9 +138,9 @@ class OrderController extends Controller
                 'total'           => $items[0]['unit_price'] * count($items),
                 'delivery_charge' => $request->delivery_charge,
             ]);
-            
-            
-            if(($request->paid_amount == '' || $request->paid_amount == 0) || $request->payment_method == PaymentMethod::CASH_ON_DELIVERY) {
+
+
+            if (($request->paid_amount == '' || $request->paid_amount == 0) || $request->payment_method == PaymentMethod::CASH_ON_DELIVERY) {
                 $request->request->add([
                     'paid_amount'           => 0,
                     'payment_method'        => PaymentMethod::CASH_ON_DELIVERY,
@@ -155,9 +153,9 @@ class OrderController extends Controller
                     'payment_status'        => PaymentStatus::PAID
                 ]);
             }
-            
+
             $orderService = app(OrderService::class)->order($request);
-            
+
 
             if ($orderService->status) {
                 $order = Order::find($orderService->order_id);
@@ -173,7 +171,6 @@ class OrderController extends Controller
                     'message' => $orderService->message,
                 ], 401);
             }
-
         } else {
             return response()->json([
                 'status'  => 422,
@@ -184,7 +181,7 @@ class OrderController extends Controller
 
     private function orderResponse($order)
     {
-        return ['order_id' => $order->id, 'total_amount' => $order->total ];
+        return ['order_id' => $order->id, 'total_amount' => $order->total];
     }
 
     private function createShow($id)
@@ -233,17 +230,16 @@ class OrderController extends Controller
             OrderStatus::CANCEL => 'Cancel'
         ];
 
-        if((int) $id) {
+        if ((int) $id) {
             $order = Order::find($id);
-            if(!blank($order)) {
-                if(isset($status[$request->status])) {
+            if (!blank($order)) {
+                if (isset($status[$request->status])) {
                     $orderService = app(OrderService::class)->orderUpdate($id, $request->status);
 
-                    if($orderService->status) {
+                    if ($orderService->status) {
                         try {
-                            app(PushNotificationService::class)->sendNotificationOrderUpdate($order, $order->user,'customer');
-                        } catch(\Exception $e) {
-
+                            app(PushNotificationService::class)->sendNotificationOrderUpdate($order, $order->user, 'customer');
+                        } catch (\Exception $e) {
                         }
                         return response()->json([
                             'status'  => 200,
@@ -278,18 +274,16 @@ class OrderController extends Controller
 
     public function orderPayment(Request $request)
     {
-        if ( (int)$request->order_id ) {
+        if ((int)$request->order_id) {
             $order = Order::find($request->order_id);
-            if ( !blank($order) ) {
-                if($request->payment_method != PaymentMethod::CASH_ON_DELIVERY && $order->payment_status != PaymentStatus::PAID) {
-                    if ( $request->payment_method != PaymentMethod::WALLET) {
-                        return 'hei';
+            if (!blank($order)) {
+                if ($request->payment_method != PaymentMethod::CASH_ON_DELIVERY && $order->payment_status != PaymentStatus::PAID) {
+                    if ($request->payment_method != PaymentMethod::WALLET) {
                         app(TransactionService::class)->addFund(0, $order->user->balance_id, $order->payment_method, $order->total, $order->id);
                     }
-                    if ( $this->adminBalanceId != $order->user->balance_id ) {
+                    if ($this->adminBalanceId != $order->user->balance_id) {
                         app(TransactionService::class)->payment($order->user->balance_id, $this->adminBalanceId, $order->total, $order->id);
                     }
-                    return 'wait here';
 
                     $order->paid_amount    = $order->total;
                     $order->payment_method = $request->payment_method;
@@ -319,21 +313,19 @@ class OrderController extends Controller
         }
     }
 
-    public function orderCancel( $id )
+    public function orderCancel($id)
     {
-        if ( $id ) {
+        if ($id) {
             $order = Order::where([
                 'user_id' => auth()->id(),
                 'status'  => OrderStatus::PENDING
             ])->find($id);
-            if ( !blank($order) ) {
+            if (!blank($order)) {
                 $orderService = app(OrderService::class)->cancel($id);
-                if ( $orderService->status ) {
+                if ($orderService->status) {
                     try {
-                        app(PushNotificationService::class)->sendNotificationOrderUpdate($order, $order->user,'customer');
-
-                    } catch(\Exception $e) {
-
+                        app(PushNotificationService::class)->sendNotificationOrderUpdate($order, $order->user, 'customer');
+                    } catch (\Exception $e) {
                     }
                     return response()->json([
                         'status'  => 200,

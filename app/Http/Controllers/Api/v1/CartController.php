@@ -30,9 +30,34 @@ class CartController extends FrontendController
             }]);
         }])->get();
         if ($cart) {
+            $cartItems = $cart->map(function ($item) {
+                return [
+                    'cart' => [
+                        'id' => $item->id,
+                        'user_id' => $item->user_id,
+                        'qty' => $item->qty,
+                    ],
+                    'product' => [
+                        'id' => $item->product->id,
+                        'name' => $item->product->name,
+                        'description' => $item->product->description,
+                        'unit_price' => $item->product->unit_price,
+                        'discount_price' => $item->product->discount_price,
+                        'image' => $item->product->image,  // Accessing the image attribute
+                        'restaurant' => [
+                            'id' => $item->product->restaurant->id,
+                            'name' => $item->product->restaurant->name,
+                            'description' => $item->product->restaurant->description,
+                            'address' => $item->product->restaurant->address,
+                        ]
+                    ]
+                ];
+            });
             return response()->json([
                 'status' => true,
-                'data' => $cart
+                'data' => [
+                    'cart' => $cartItems,
+                ]
             ]);
         }
         return response()->json([

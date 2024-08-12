@@ -18,6 +18,7 @@ use App\Models\Restaurant;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Enums\RestaurantStatus;
+use App\Http\Resources\v1\RestaurantResource;
 use Spatie\Permission\Models\Role;
 
 class RestaurantService
@@ -63,14 +64,27 @@ class RestaurantService
             $this->data['error']='the user not found';
             return $this->data;
         }
-        $orders = Order::where(['restaurant_id' => $id])->whereDate('created_at', Carbon::today())->orderowner()->get();
+        $orders = Order::where(['restaurant_id' => $id])->get();
+        $totalIncome = 0;
+        if ($orders) {
+            foreach ($orders as $totalOrder) {
+                if (OrderStatus::COMPLETED == $totalOrder->status) {
+                    $totalIncome = $totalIncome + $totalOrder->paid_amount;
+                }
+            }
+        }
 
+        $this->data['total_sales']     = $totalIncome;
         $this->data['total_order']     = $orders->count();
         $this->data['pending_order']   = $orders->where('status', OrderStatus::PENDING)->count();
         $this->data['process_order']   = $orders->where('status', OrderStatus::PROCESS)->count();
         $this->data['completed_order'] = $orders->where('status', OrderStatus::COMPLETED)->count();
+        $this->data['today\'s order'] = [
+            'pending' => $orders->where('status', OrderStatus::PENDING)->where('created_at', Carbon::today())->count(),
+            'completed' => $orders->where('status', OrderStatus::COMPLETED)->where('created_at', Carbon::today())->count(),
+        ];
 
-        $this->data['restaurant'] = $restaurant;
+        $this->data['restaurant'] = new RestaurantResource($restaurant);
         $this->data['images'] = $this->getMedia( $id);
         $this->data['menuitems'] = $this->getMenuItem($id);
 

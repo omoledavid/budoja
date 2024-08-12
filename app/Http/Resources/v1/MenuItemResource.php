@@ -26,7 +26,8 @@ class MenuItemResource extends JsonResource
             "description"       => strip_tags($this->description),
             "restaurant_id"     => $this->restaurant_id,
             "category" =>  CategoryResource::collection($this->categories),
-            // 'variations'      => MenuItemVariationResource::collection($this->variations),
+            "restaurants" => $this->restaurantSearch,
+            // 'variations'      => MenuItemVaria       tionResource::collection($this->variations),
             // 'options'         => $this->options!=null?MenuItemOptionResource::collection($this->options):[],
         ];
     }

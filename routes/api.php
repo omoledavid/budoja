@@ -33,6 +33,7 @@ use App\Http\Controllers\Api\v1\StatusController;
 use App\Http\Controllers\Api\v1\TableController;
 use App\Http\Controllers\Api\v1\TimeSlotController;
 use App\Http\Controllers\Api\v1\TransactionController;
+use App\Http\Controllers\Api\v1\WishlistController;
 use App\Http\Controllers\Api\v1\WithdrawController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -99,11 +100,14 @@ Route::group(['prefix' => 'v1'], function () {
     Route::put('restaurant/{restaurant}',                                   [RestaurantController::class, 'update']); //done
     Route::get('popular-restaurant',                            [PopularRestaurantController::class, 'index']); //done
     Route::get('/restaurant/index/{id?}/{status?}/{applied?}',  [RestaurantController::class, 'index']); //done
-    Route::get('restaurant/{id}',                               [RestaurantController::class, 'show']); //done
+    Route::get('restaurant/{id}/{stat?}',                               [RestaurantController::class, 'show']); //done
     Route::get('/search',                                       [SearchController::class, 'index']); //done
 
     //product
     Route::apiResource('product', ProductController::class);
+
+    //wishlist
+    Route::apiResource('wishlist', WishlistController::class);
 
     Route::post('coupon',                                       [CouponController::class, 'apply']);
 

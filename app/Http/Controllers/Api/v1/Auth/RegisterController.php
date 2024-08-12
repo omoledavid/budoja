@@ -62,6 +62,7 @@ class RegisterController extends Controller
             'phone'      => $request->get('phone'),
             'address'      => $request->get('address'),
             'city'      => $request->get('city'),
+            'state'      => $request->get('state'),
             'password'   => bcrypt($request->get('password')),
         ];
 

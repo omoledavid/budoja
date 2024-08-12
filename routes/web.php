@@ -82,7 +82,8 @@ Route::group(['prefix' => 'install', 'as' => 'LaravelInstaller::', 'middleware' 
 
 Route::group(['middleware' => ['installed', 'license-activate']], function () {
     Route::get('/home',                                     [HomeController::class, 'index'])->name('home');
-    Route::get('/',                                         [HomeController::class, 'index'])->name('home');
+    Route::get('/',                                         [LoginController::class, 'showLoginForm']);
+    // Route::get('/',                                         [HomeController::class, 'index'])->name('home');
     Route::get('restaurant/{restaurant}',                   [RestaurantController::class, 'show'])->name('restaurant.show');
     Route::post('restaurant/ratings',                       [RestaurantController::class, 'Ratings'])->name('restaurant.ratings-update')->middleware('auth');
 

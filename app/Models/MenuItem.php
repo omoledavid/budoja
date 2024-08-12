@@ -162,6 +162,10 @@ class MenuItem extends BaseModel implements HasMedia
     {
         return $this->belongsTo(Restaurant::class);
     }
+    public function restaurantSearch()
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+    }
 
     public function cuisine()
     {

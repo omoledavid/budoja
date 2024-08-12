@@ -64,8 +64,21 @@ class RestaurantController extends BackendController
     }
 
 
-    public function show($id)
+    public function show($id, $stat = false)
     {
+        if($stat){
+            $statistics = $this->restaurantService->show($id);
+            return response()->json([
+                'status' => true,
+                'data' => $statistics,  // Include the array or object data in the response
+            ]);
+            try {
+                $statistics = $this->restaurantService->show($id);
+                return 'working'.$statistics;
+            } catch(\Exception){
+                return 'not working';
+            }
+        }
         $this->data['restaurant'] = Restaurant::findOrFail($id);
         $rating      = new RatingsService();
         $ratingArray = $rating->avgRating($this->data['restaurant']->id);

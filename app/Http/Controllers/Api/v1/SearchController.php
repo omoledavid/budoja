@@ -43,9 +43,11 @@ class   SearchController extends BackendController
     {
     $query = $request->input('query');
     $category = $request->input('category');
+    $restaurant = $request->input('restaurant');
     $city = $request->input('city');
     $state = $request->input('state');
     $product = $request->input('product');
+
 
     // Initialize the query for Restaurant
     $restaurantsQuery = Restaurant::query();
@@ -68,6 +70,11 @@ class   SearchController extends BackendController
     if ($category) {
         $productQuery->whereHas('categories', function ($q) use ($category) {
             $q->where('name', 'LIKE', "%{$category}%");
+        });
+    }
+    if ($restaurant) {
+        $productQuery->whereHas('restaurantSearch', function ($q) use ($restaurant) {
+            $q->where('name', 'LIKE', "%{$restaurant}%");
         });
     }
 
@@ -95,11 +102,7 @@ class   SearchController extends BackendController
 
     // Execute the query and get the results
     $restaurants = $restaurantsQuery->get();
-    $products = $productQuery->with([
-        'categories' => function ($q){
-            $q->select('id','name');
-        }
-    ])->get();
+    $products = $productQuery->get();
     // return $products;
     // return  RestaurantResource::collection($restaurants);
 
