@@ -44,11 +44,12 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), $validator->rules());
         if (!$validator->fails()) {
             $restuarant = Restaurant::where('id', $request->restaurant_id)->where('status', RestaurantStatus::ACTIVE)->first();
-            if(!$restuarant){
+            if (!$restuarant) {
                 return response()->json([
                     'status' => false,
                     'message' => 'The resturant is currently inactive',
                 ]);
+            }
 
             try {
                 DB::beginTransaction();

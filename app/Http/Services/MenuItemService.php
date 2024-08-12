@@ -36,6 +36,7 @@ class MenuItemService
         $menuItem->unit_price     = $request->get('unit_price');
         $menuItem->discount_price = $request->get('discount_price');
         $menuItem->status         = $request->get('status');
+        $menuItem->cooking_time         = $request->get('cooking_time');
         $menuItem->save();
         $menuItem->categories()->sync($request->get('categories'));
         
