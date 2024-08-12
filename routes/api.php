@@ -31,6 +31,7 @@ use App\Http\Controllers\Api\v1\RestaurantReservationController;
 use App\Http\Controllers\Api\v1\SearchController;
 use App\Http\Controllers\Api\v1\SettingController;
 use App\Http\Controllers\Api\v1\StatusController;
+use App\Http\Controllers\Api\v1\SupportTicketController;
 use App\Http\Controllers\Api\v1\TableController;
 use App\Http\Controllers\Api\v1\TimeSlotController;
 use App\Http\Controllers\Api\v1\TransactionController;
@@ -53,8 +54,12 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'v1'], function () {
     //generals
     Route::get('products', [BasicController::class, 'index']);
+    Route::get('all-restaurants', [BasicController::class, 'getRestaurant']);
     Route::get('products/{id}', [BasicController::class, 'show']);
     Route::get('/search',                                       [BasicController::class, 'search']); //done
+
+    //support ticket
+    Route::apiResource('support', SupportTicketController::class);
 
     Route::post('login',                                        [LoginController::class, 'action']);
     Route::post('social-login',                                 [SocialLoginController::class, 'action']);
@@ -157,7 +162,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::get('notification-order',                            [NotificationOrderController::class, 'index']); //done
     Route::put('notification-order/{id}/update',                [NotificationOrderController::class, 'orderAccept']); //done
-    Route::put('notification-order-product-receive/{id}/update',[NotificationOrderController::class, 'OrderProductReceive']); //done
+    Route::put('notification-order-product-receive/{id}/update', [NotificationOrderController::class, 'OrderProductReceive']); //done
     Route::put('notification-order-status/{id}/update',         [NotificationOrderController::class, 'orderStatus']); //done
     Route::get('notification-order/{id}/show',                  [NotificationOrderController::class, 'show']); //done
     Route::get('notification-order/history',                    [NotificationOrderController::class, 'history']); //done

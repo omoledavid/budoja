@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Enums\RestaurantStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\v1\MenuItemResource;
+use App\Http\Resources\v1\RestaurantResource;
 use App\Http\Services\MenuItemService;
 use App\Models\MenuItem;
 use App\Models\Restaurant;
@@ -46,7 +48,7 @@ class BasicController extends Controller
     }
     public function search(Request $request)
     { {
-            $query = $request->input('query');
+            $query = $request->input('name');
             $category = $request->input('category');
             $restaurant = $request->input('restaurant');
             $city = $request->input('city');
@@ -116,5 +118,12 @@ class BasicController extends Controller
                 'data' =>  MenuItemResource::collection($products), // Re-index the collection
             ]);
         }
+    }
+    public function getRestaurant (){
+        $restaurant = Restaurant::where('status', RestaurantStatus::ACTIVE)->get();
+        return response()->json([
+            'status' => true,
+            'data' => RestaurantResource::collection($restaurant)
+        ]);
     }
 }
