@@ -54,6 +54,7 @@ Route::group(['prefix' => 'v1'], function () {
     //generals
     Route::get('products', [BasicController::class, 'index']);
     Route::get('products/{id}', [BasicController::class, 'show']);
+    Route::get('/search',                                       [BasicController::class, 'search']); //done
 
     Route::post('login',                                        [LoginController::class, 'action']);
     Route::post('social-login',                                 [SocialLoginController::class, 'action']);
@@ -102,7 +103,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('popular-restaurant',                            [PopularRestaurantController::class, 'index']); //done
     Route::get('/restaurant/index/{id?}/{status?}/{applied?}',  [RestaurantController::class, 'index']); //done
     Route::get('restaurant/{id}/{stat?}',                               [RestaurantController::class, 'show']); //done
-    Route::get('/search',                                       [SearchController::class, 'index']); //done
+    // Route::get('/search',                                       [SearchController::class, 'index']); //done
 
     //product
     Route::apiResource('product', ProductController::class);
