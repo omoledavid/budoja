@@ -32,6 +32,7 @@ class RegisterRequest extends FormRequest
             'role'                 => 'required|nullable|numeric',
             'address'                 => 'nullable',
             'city'                 => 'nullable',
+            'state'                 => 'nullable',
             'password'              => 'required|string|min:6|confirmed',
             'password_confirmation' => 'required',
         ];

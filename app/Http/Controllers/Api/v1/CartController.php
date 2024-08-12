@@ -42,12 +42,13 @@ class CartController extends FrontendController
                             'description' => $item->product->description,
                             'unit_price' => $item->product->unit_price,
                             'discount_price' => $item->product->discount_price,
+                            'restaurant_id' => $item->product->restaurant_id ?? 'N/A',
                             'image' => $item->product->image,  // Accessing the image attribute
                             'restaurant' => [
-                                'id' => $item->product->restaurant->id,
-                                'name' => $item->product->restaurant->name,
-                                'description' => $item->product->restaurant->description,
-                                'address' => $item->product->restaurant->address,
+                                'id' => $item->product->restaurant->id ?? 'N/A',
+                                'name' => $item->product->restaurant->name ?? 'N/A',
+                                'description' => $item->product->restaurant->description ?? 'N/A',
+                                'address' => $item->product->restaurant->address ?? 'N/A',
                             ]
                         ]
                     ]
