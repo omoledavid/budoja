@@ -35,7 +35,7 @@ class MenuItemRequest extends FormRequest
             'status'         => 'required|numeric',
             'description'    => 'nullable|string|max:1000',
             'categories' => 'required',
-            'cooking_time' => 'required',
+            'cooking_time' => 'nullable',
             // 'image'          => 'required|image|mimes:jpeg,png,jpg|max:4096',
         ];
     }
