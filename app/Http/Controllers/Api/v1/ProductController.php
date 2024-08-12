@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Enums\RestaurantStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\MenuItemRequest;
 use App\Http\Resources\v1\MenuItemResource;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Services\MenuItemService;
+use App\Models\Restaurant;
 use App\Traits\ApiResponse;
 
 class ProductController extends Controller
@@ -41,6 +43,12 @@ class ProductController extends Controller
         $validator = new MenuItemRequest();
         $validator = Validator::make($request->all(), $validator->rules());
         if (!$validator->fails()) {
+            $restuarant = Restaurant::where('id', $request->restaurant_id)->where('status', RestaurantStatus::ACTIVE)->first();
+            if(!$restuarant){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'The resturant is currently inactive',
+                ]);
 
             try {
                 DB::beginTransaction();

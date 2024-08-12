@@ -14,22 +14,27 @@ class MenuItemResource extends JsonResource
      */
     public function toArray( $request )
     {
+        $restaurant = $this->restaurantSearch;
         return [
             "id"                => $this->id,
             "name"              => $this->name,
-            // "slug"              => $this->slug,
-            // "menu_number"       => $this->menu_number,
             "unit_price"        => $this->unit_price,
             "discount_price"    => $this->discount_price,
-            // "currency_code"     => setting('currency_code'),
             "image"             => $this->image,
             "description"       => strip_tags($this->description),
             "restaurant_id"     => $this->restaurant_id,
-            "category" =>  CategoryResource::collection($this->categories),
-            "restaurants" => $this->restaurantSearch,
-            // 'variations'      => MenuItemVaria       tionResource::collection($this->variations),
-            // 'options'         => $this->options!=null?MenuItemOptionResource::collection($this->options):[],
+            "category"          => CategoryResource::collection($this->categories),
+            "restaurant"        => $this->restaurantSearch ? [
+                "id"            => $this->restaurantSearch['id'] ?? null,
+                "name"          => $this->restaurantSearch['name'] ?? null,
+                "description"   => $this->restaurantSearch['description'] ?? null,
+                "address"       => $this->restaurantSearch['address'] ?? null,
+                "image"         => $this->restaurantSearch['image'] ?? 'default-image-path.jpg',
+            ] : null,  // Return null if restaurantSearch is null
         ];
+        
+        
+        
     }
 
 }

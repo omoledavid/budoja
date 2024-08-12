@@ -146,7 +146,7 @@ class RestaurantController extends BackendController
         $restaurant->description     = $request->description;
         $restaurant->address         = $request->address;
         $restaurant->current_status  = 0;
-        $restaurant->status          = RestaurantStatus::INACTIVE;
+        $restaurant->status          = RestaurantStatus::ACTIVE;
         $restaurant->applied         = true;
         $restaurant->save();
         $restaurant->cuisines()->sync($request->get('cuisines'));
