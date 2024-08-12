@@ -33,15 +33,16 @@ class CartController extends FrontendController
             $cartItems = $cart->map(function ($item) {
                 return [
                     'cart' => [
-                        'id' => $item->id,
-                        'user_id' => $item->user_id,
-                        'qty' => $item->qty,
+                        'id' => $item->id ?? 'N/A',
+                        'user_id' => $item->user_id ?? 'N/A',
+                        'qty' => $item->qty ?? 'N/A',
+                        'product_id' => $item->product_id ?? 'N/A',
                         'product' => [
-                            'id' => $item->product->id,
-                            'name' => $item->product->name,
-                            'description' => $item->product->description,
-                            'unit_price' => $item->product->unit_price,
-                            'discount_price' => $item->product->discount_price,
+                            'id' => $item->product->id ?? 'N/A',
+                            'name' => $item->product->name ?? 'N/A',
+                            'description' => $item->product->description ?? 'N/A',
+                            'unit_price' => $item->product->unit_price ?? 'N/A',
+                            'discount_price' => $item->product->discount_price ?? 'N/A',
                             'restaurant_id' => $item->product->restaurant_id ?? 'N/A',
                             'image' => $item->product->image,  // Accessing the image attribute
                             'restaurant' => [
