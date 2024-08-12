@@ -32,7 +32,7 @@ class RestaurantStoreRequest extends FormRequest
             'long'            => ['nullable'],
             'opening_time'    => ['nullable'],
             'closing_time'    => ['nullable'],
-            'address'         => ['required', 'max:200'],
+            'address'         => ['nullable', 'max:200'],
             'current_status'  => ['sometimes', 'numeric'],
             'delivery_status' => ['nullable', 'numeric'],
             'pickup_status'   => ['nullable', 'numeric'],

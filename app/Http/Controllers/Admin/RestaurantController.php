@@ -190,16 +190,8 @@ class RestaurantController extends BackendController
                 $restaurant->user_id         = $user->id;
                 $restaurant->name            = $request->name;
                 $restaurant->description     = $request->description;
-                $restaurant->lat             = $request->lat;
-                $restaurant->long            = $request->long;
-                $restaurant->opening_time    = date('H:i:s', strtotime($request->opening_time));
-                $restaurant->closing_time    = date('H:i:s', strtotime($request->closing_time));
                 $restaurant->address         = $request->restaurantaddress;
                 $restaurant->current_status  = $request->current_status;
-                $restaurant->waiter_status   = $request->waiter_status;
-                $restaurant->delivery_status = $request->delivery_status;
-                $restaurant->pickup_status   = $request->pickup_status;
-                $restaurant->table_status    = $request->table_status;
                 $restaurant->status          = $request->status;
                 if ($user->status == UserStatus::INACTIVE) {
                     $restaurant->status = RestaurantStatus::INACTIVE;
@@ -423,16 +415,9 @@ class RestaurantController extends BackendController
         $restaurant->user_id         = auth()->id();
         $restaurant->name            = $request->name;
         $restaurant->description     = $request->description;
-        $restaurant->lat             = $request->lat;
-        $restaurant->long            = $request->long;
-        $restaurant->opening_time    = date('H:i:s', strtotime($request->opening_time));
-        $restaurant->closing_time    = date('H:i:s', strtotime($request->closing_time));
         $restaurant->address         = $request->address;
         $restaurant->current_status  = $request->current_status;
         $restaurant->waiter_status   = $request->waiter_status;
-        $restaurant->delivery_status = $request->delivery_status;
-        $restaurant->pickup_status   = $request->pickup_status;
-        $restaurant->table_status    = $request->table_status;
         $restaurant->applied         = true;
         $restaurant->save();
         $restaurant->cuisines()->sync($request->get('cuisines'));
