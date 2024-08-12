@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\v1\BannerController;
 use App\Http\Controllers\Api\v1\BasicController;
 use App\Http\Controllers\Api\v1\CartController;
 use App\Http\Controllers\Api\v1\CategoryController;
+use App\Http\Controllers\Api\v1\CheckoutController;
 use App\Http\Controllers\Api\v1\CouponController;
 use App\Http\Controllers\Api\v1\CuisineController;
 use App\Http\Controllers\Api\v1\MenuItemController;
@@ -108,6 +109,9 @@ Route::group(['prefix' => 'v1'], function () {
 
     //wishlist
     Route::apiResource('wishlist', WishlistController::class);
+
+    //checkout
+    Route::post('checkout', [CheckoutController::class, 'store']);
 
     Route::post('coupon',                                       [CouponController::class, 'apply']);
 

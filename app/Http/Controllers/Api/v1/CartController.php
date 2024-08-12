@@ -24,8 +24,8 @@ class CartController extends FrontendController
 
     public function index()
     {
-        $cart = Cart::where('user_id', auth()->id())->with(['product' => function($query){
-            $query->select('id', 'restaurant_id', 'name', 'description', 'unit_price', 'discount_price')->with(['restaurant' => function($query){
+        $cart = Cart::where('user_id', auth()->id())->with(['product' => function ($query) {
+            $query->select('id', 'restaurant_id', 'name', 'description', 'unit_price', 'discount_price')->with(['restaurant' => function ($query) {
                 $query->select('id', 'user_id', 'name', 'description', 'address');
             }]);
         }])->get();
@@ -36,19 +36,19 @@ class CartController extends FrontendController
                         'id' => $item->id,
                         'user_id' => $item->user_id,
                         'qty' => $item->qty,
-                    ],
-                    'product' => [
-                        'id' => $item->product->id,
-                        'name' => $item->product->name,
-                        'description' => $item->product->description,
-                        'unit_price' => $item->product->unit_price,
-                        'discount_price' => $item->product->discount_price,
-                        'image' => $item->product->image,  // Accessing the image attribute
-                        'restaurant' => [
-                            'id' => $item->product->restaurant->id,
-                            'name' => $item->product->restaurant->name,
-                            'description' => $item->product->restaurant->description,
-                            'address' => $item->product->restaurant->address,
+                        'product' => [
+                            'id' => $item->product->id,
+                            'name' => $item->product->name,
+                            'description' => $item->product->description,
+                            'unit_price' => $item->product->unit_price,
+                            'discount_price' => $item->product->discount_price,
+                            'image' => $item->product->image,  // Accessing the image attribute
+                            'restaurant' => [
+                                'id' => $item->product->restaurant->id,
+                                'name' => $item->product->restaurant->name,
+                                'description' => $item->product->restaurant->description,
+                                'address' => $item->product->restaurant->address,
+                            ]
                         ]
                     ]
                 ];
@@ -113,7 +113,16 @@ class CartController extends FrontendController
             return response()->json($validator->errors());
         }
         $user = auth()->user();
-        $product = MenuItem::where('id', $request->product_id)->get();
+        $resturantExist = cart::where('user_id', $user->id)->first();
+        $cartProduct = MenuItem::where('id', $resturantExist->product_id)->first();
+        $requestProduct = MenuItem::where('id', $request->product_id)->first();
+        if ($cartProduct && $requestProduct) {
+            if ($cartProduct->restaurant_id != $requestProduct->restaurant_id) {
+                return response()->json([
+                    'message' => 'you can only purchase an item from one restaurant at a time',
+                ], 400);
+            }
+        }
         $cartData = Cart::where('user_id', $user->id)->where('product_id', $request->product_id)->first();
         if ($cartData) {
             $cartData->qty = $request->qty;
@@ -132,6 +141,7 @@ class CartController extends FrontendController
             $cart->save();
             return response()->json([
                 'status' => true,
+                'message' => 'product added to cart',
                 'data' => $cart
             ], 200);
         }

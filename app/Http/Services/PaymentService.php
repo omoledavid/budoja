@@ -5,6 +5,8 @@ namespace App\Http\Services;
 use App\Enums\OrderTypeStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Models\Cart;
+use App\Models\MenuItem;
 use App\Models\Restaurant;
 
 class PaymentService
@@ -13,11 +15,14 @@ class PaymentService
 
     public function payment($paymetSuccess)
     {
+        $user = auth()->user();
+        $resturantExist = Cart::where('user_id', $user->id)->first();
+        $cartProduct = MenuItem::where('id', $resturantExist->product_id)->first();
 
-        $restaurant = Restaurant::find(session('session_cart_restaurant_id'));
+        $restaurant = Restaurant::find($cartProduct->restaurant_id);
         $request = session()->get('checkoutRequest');
 
-        $cart = session()->get('cart');
+        $cart = Cart::where('user_id', $user->id)->get();
 
         if (($cart && isset($cart['delivery_type']) && $cart['delivery_type'] == true) || ($cart && isset($cart['free_delivery']) && $cart['free_delivery'])) {
             $delivery_charge = 0;
@@ -32,10 +37,10 @@ class PaymentService
         $cartItems = session()->get('cart')['items'] ?? [];
 
         foreach ($cartItems as $cart) {
-            $menuItemVariationId = $cart['variation']['id'] ?? null;
-            $variation = $cart['variation'] ?? null;
-            $options = $cart['options'] ?? null;
-            $instructions = $cart['instructions'] ?? null;
+            // $menuItemVariationId = $cart['variation']['id'] ?? null;
+            // $variation = $cart['variation'] ?? null;
+            // $options = $cart['options'] ?? null;
+            // $instructions = $cart['instructions'] ?? null;
 
             $items[] = [
                 'restaurant_id' => $restaurant->id,
@@ -76,7 +81,7 @@ class PaymentService
             $this->data['payment_status'] = PaymentStatus::PAID;
         } elseif ($request['payment_type'] == PaymentMethod::PAYPAL && $paymetSuccess) {
 
-            $this->data['paid_amount'] = session()->get('cart')['totalAmount'] + $delivery_charge;
+            $this->data['paid_amount'] = 419;
             $this->data['payment_method'] = $request['payment_type'];
             $this->data['payment_status'] = PaymentStatus::PAID;
         } elseif ($request['payment_type'] == PaymentMethod::RAZORPAY && $paymetSuccess) {

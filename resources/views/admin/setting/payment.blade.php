@@ -28,13 +28,13 @@
                                     id="paystack" data-toggle="pill" href="#paystacktab" role="tab"
                                     aria-controls="paystacktab" aria-selected="false">{{ __('setting.paystack') }}</a>
                             </li>
-                            {{-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a class="nav-link {{ old('settingtypepayment', setting('settingtypepayment')) == 'paypal' ? 'active' : '' }}"
                                     id="paypal" data-toggle="pill" href="#paypaltab" role="tab"
                                     aria-controls="paypaltab" aria-selected="false">{{ __('setting.paypal') }}</a>
                             </li>
 
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link {{ old('settingtypepayment', setting('settingtypepayment')) == 'paytm' ? 'active' : '' }}"
                                     id="paytm" data-toggle="pill" href="#paytmtab" role="tab"
                                     aria-controls="paytmtab" aria-selected="false">{{ __('setting.paytm') }}</a>
