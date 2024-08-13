@@ -57,12 +57,12 @@ class CheckoutController extends FrontendController
 
     public function store(Request $request)
     {
-        return 'not working';
         // $sessionRestaurantId = session('session_cart_restaurant_id');
         // if (blank($sessionRestaurantId)) {
-        //     return redirect(route('checkout.index'))->withError('The Restaurant not found');
-        // }        
-        $user = auth()->user();
+            //     return redirect(route('checkout.index'))->withError('The Restaurant not found');
+            // }        
+            $user = auth()->user();
+            return 'not working';
         $cart = Cart::where('user_id', $user->id)->with(['product' => function($q){
             $q->select('id', 'restaurant_id', 'name', 'description', 'unit_price', 'discount_price');
         }])->get();
