@@ -376,6 +376,10 @@ class CheckoutController extends FrontendController
         if (isset($response['id']) && $response['id'] != null) {
             return $this->redirectPaypalApproval($response['links']);
         } else {
+            return response()->json([
+                'status' => false,
+                'data' => $response,
+            ]);
             return redirect(route('checkout.index'))->withError('You have canceled the transaction.');
         }
     }
