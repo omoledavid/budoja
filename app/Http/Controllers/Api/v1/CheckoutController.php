@@ -90,10 +90,10 @@ class CheckoutController extends FrontendController
             $validation['address'] = 'required|string';
         }
 
-        $totalAmount = $cart->sum(function ($item) {
+        $dataAmount = $cart->sum(function ($item) {
             return $item->product->unit_price * $item->qty;
         });
-        $totalAmount = round((float) $totalAmount, 2);
+        $totalAmount = number_format((float) $dataAmount, 2, '.', '');
 
 
         // Perform validation
