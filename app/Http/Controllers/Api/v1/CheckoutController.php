@@ -385,6 +385,7 @@ class CheckoutController extends FrontendController
 
     protected function createPaypalOrder($provider, $totalAmount)
     {
+        return $totalAmount;
         return $provider->createOrder([
             'intent' => 'CAPTURE',
             'application_context' => [
@@ -395,7 +396,7 @@ class CheckoutController extends FrontendController
                 [
                     'amount' => [
                         'currency_code' => 'USD',
-                        'value' => 100,
+                        'value' => $totalAmount,
                     ],
                 ],
             ],
