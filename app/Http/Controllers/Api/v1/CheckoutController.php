@@ -386,6 +386,7 @@ class CheckoutController extends FrontendController
 
     protected function createPaypalOrder($provider, $totalAmount)
     {
+        $formattedAmount = number_format((float) $totalAmount, 2, '.', '');
         return $provider->createOrder([
             'intent' => 'CAPTURE',
             'application_context' => [
@@ -396,7 +397,7 @@ class CheckoutController extends FrontendController
                 [
                     'amount' => [
                         'currency_code' => 'USD',
-                        'value' => $totalAmount,
+                        'value' => $formattedAmount,
                     ],
                 ],
             ],
