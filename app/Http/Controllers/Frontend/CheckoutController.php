@@ -429,7 +429,7 @@ class CheckoutController extends FrontendController
     protected function handleOrderServiceResponse($orderService)
     {
         if ($orderService) {
-            return Redirect::away('https://budoja.com//app/sucess');
+            return Redirect::away('https://budoja.com/app/sucess');
             // return response()->json([
             //     'status' => true,
             //     'message' => 'Paypal Payment successful, Order complete'

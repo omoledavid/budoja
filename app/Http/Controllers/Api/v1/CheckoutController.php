@@ -117,7 +117,7 @@ class CheckoutController extends FrontendController
                 'message' => $validator->errors(),
             ]);
         }
-        
+
         // Handle different payment methods
         session()->put('checkoutRequest', $request->all());
         $paymentType = $request->payment_type;
@@ -131,7 +131,7 @@ class CheckoutController extends FrontendController
             case PaymentMethod::PHONEPE:
                 return $this->phonePePayment($request);
             case PaymentMethod::PAYPAL:
-                return $this->initiatePaypalPayment($request,$totalAmount);
+                return $this->initiatePaypalPayment($request, $totalAmount);
             case PaymentMethod::SSLCOMMERZ:
                 return $this->sslcommerzPayment($request);
             case PaymentMethod::RAZORPAY:
@@ -585,6 +585,11 @@ class CheckoutController extends FrontendController
 
             if ($orderService->status) {
                 $order = Order::find($orderService->order_id);
+                $carts_data = Cart::where('session_id', session('session_id'))->orWhere('user_id', auth()->user()->id ?? null)->get();
+
+                foreach ($carts_data as $cart) {
+                    $cart->delete();
+                }
                 return $orderService;
             } else {
                 return response()->json([
