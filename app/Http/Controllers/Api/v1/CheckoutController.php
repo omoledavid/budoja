@@ -115,9 +115,8 @@ class CheckoutController extends FrontendController
     // Handle different payment methods
     session()->put('checkoutRequest', $request->all());
     $paymentType = $request->payment_type;
-    
+    return $paymentType;
     switch ($paymentType) {
-        return 'got oherej';
         case PaymentMethod::STRIPE:
             return $this->processStripePayment($restaurant, $totalAmount);
         case PaymentMethod::PAYSTACK:
