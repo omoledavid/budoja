@@ -435,10 +435,11 @@ class CheckoutController extends FrontendController
             //     'message' => 'Paypal Payment successful, Order complete'
             // ]);
         } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Something went wrong'
-            ], 400);
+            return Redirect::away('https://budoja.com/app/failed');
+            // return response()->json([
+            //     'status' => false,
+            //     'message' => 'Something went wrong'
+            // ], 400);
         }
     }
 

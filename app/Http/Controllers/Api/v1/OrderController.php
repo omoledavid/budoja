@@ -45,7 +45,7 @@ class OrderController extends Controller
     public function index()
     {
         $response = Order::where(['user_id' => auth()->user()->id])
-            ->select('id', 'user_id', 'total', 'payment_status', 'paid_amount', 'address', 'mobile', 'restaurant_id','product_received', 'payment_method', 'created_at')
+            ->select('id', 'user_id', 'total', 'payment_status', 'status', 'paid_amount', 'address', 'mobile', 'restaurant_id','product_received', 'payment_method', 'created_at')
             ->orderBy('id', 'desc')
             ->with('items')
             ->get();
@@ -58,7 +58,7 @@ class OrderController extends Controller
         }
 
         $response->map(function ($post) {
-            $post['status_name']         = trans('order_status.' . $post->status);
+            // $post['status_name']         = trans('order_status.' . $post->status);
             $post['order_code']          = $post->order_code;
             $post['address']             = orderAddress($post->address);
             // $post['order_type']          = (int)$post->order_type;

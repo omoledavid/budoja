@@ -561,7 +561,7 @@ class CheckoutController extends FrontendController
                 'restaurant_id'   => $items[0]['restaurant_id'],
                 'user_id'         => auth()->user()->id,
                 'mobile'          => auth()->user()->phone,
-                'total'           => $items[0]['unit_price'] * count($items),
+                'total'           => ($items[0]['unit_price'] * $items[0]['quantity']) * count($items),
                 'delivery_charge' => $request->delivery_charge,
             ]);
 
