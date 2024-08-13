@@ -26,7 +26,6 @@ class CheckoutController extends FrontendController
 {
     public function __construct()
     {
-        parent::__construct();
         $this->middleware('auth:api');
     }
 
