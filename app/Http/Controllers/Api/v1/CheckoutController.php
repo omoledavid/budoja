@@ -368,7 +368,6 @@ class CheckoutController extends FrontendController
 
     protected function initiatePaypalPayment($totalAmount)
     {
-        return $totalAmount;
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
         $paypalToken = $provider->getAccessToken();
