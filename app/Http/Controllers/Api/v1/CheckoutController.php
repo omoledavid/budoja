@@ -103,7 +103,10 @@ class CheckoutController extends FrontendController
         })->validate();
 
         if ($validator->fails()) {
-            return redirect(route('checkout.index'))->withError($validator);
+            return response()->json([
+                'status' => false,
+                'message' => $validation,
+            ]);
         }
 
         if ($user) {
