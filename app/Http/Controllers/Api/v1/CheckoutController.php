@@ -62,7 +62,7 @@ class CheckoutController extends FrontendController
             //     return redirect(route('checkout.index'))->withError('The Restaurant not found');
             // }        
             $user = auth()->user();
-            return 'not working'.$user;
+            
         $cart = Cart::where('user_id', $user->id)->with(['product' => function($q){
             $q->select('id', 'restaurant_id', 'name', 'description', 'unit_price', 'discount_price');
         }])->get();
@@ -106,7 +106,7 @@ class CheckoutController extends FrontendController
             return redirect(route('checkout.index'))->withError($validator);
         }
 
-        if (auth()->check()) {
+        if ($user) {
             session()->put('checkoutRequest', $request->all());
             $paymentType = $request->payment_type;
             if ($paymentType == PaymentMethod::STRIPE) {
