@@ -68,130 +68,64 @@ class CartController extends FrontendController
         ], 400);
     }
 
-    private function cartInfo($menuItemId, $variationId = null)
-    {
-        $product = [];
-        $carts = Cart::content()->toArray();
-        if (is_array($carts)) {
-            foreach ($carts as $cart) {
-                if (count($cart['options']['variation']) > 0) {
-                    if (isset($product[$cart['options']['menuItem_id']]['single'])) {
-                        $product[$cart['options']['menuItem_id']]['single'] += $cart['qty'];
-                    } else {
-                        $product[$cart['options']['menuItem_id']]['single'] = $cart['qty'];
-                    }
-                    if (isset($product[$cart['options']['menuItem_id']]['variation'][$cart['options']['variation']['id']])) {
-                        $product[$cart['options']['menuItem_id']]['variation'][$cart['options']['variation']['id']] += $cart['qty'];
-                    } else {
-                        $product[$cart['options']['menuItem_id']]['variation'][$cart['options']['variation']['id']] = $cart['qty'];
-                    }
-                } else {
-                    if (isset($product[$cart['options']['menuItem_id']]['single'])) {
-                        $product[$cart['options']['menuItem_id']]['single'] += $cart['qty'];
-                    } else {
-                        $product[$cart['options']['menuItem_id']]['single'] = $cart['qty'];
-                    }
-                    $product[$cart['options']['menuItem_id']]['variation'] = [];
-                }
-            }
-        }
-
-        if ($variationId) {
-            $quantity = isset($product[$menuItemId]['variation'][$variationId]) ? $product[$menuItemId]['variation'][$variationId] : 0;
-        } else {
-            $quantity = isset($product[$menuItemId]['single']) ? $product[$menuItemId]['single'] : 0;
-        }
-
-        return $quantity;
-    }
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|integer|exists:menu_items,id',
-            'qty'  => 'required|numeric',
+            'qty'        => 'required|integer|min:1',
         ]);
+
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 422);
         }
+
         $user = auth()->user();
-        $resturantExist = cart::where('user_id', $user->id)->first();
-        $cartProduct = MenuItem::where('id', $resturantExist->product_id)->first();
-        $requestProduct = MenuItem::where('id', $request->product_id)->first();
-        if ($cartProduct && $requestProduct) {
-            if ($cartProduct->restaurant_id != $requestProduct->restaurant_id) {
-                return response()->json([
-                    'message' => 'you can only purchase an item from one restaurant at a time',
-                ], 400);
+        $resturantExist = Cart::where('user_id', $user->id)->first();
+
+        if ($resturantExist) {
+            $cartProduct = MenuItem::find($resturantExist->product_id);
+            $requestProduct = MenuItem::find($request->product_id);
+
+            if ($cartProduct && $requestProduct) {
+                if ($cartProduct->restaurant_id != $requestProduct->restaurant_id) {
+                    return response()->json([
+                        'message' => 'You can only purchase an item from one restaurant at a time.',
+                    ], 400);
+                }
             }
         }
-        $cartData = Cart::where('user_id', $user->id)->where('product_id', $request->product_id)->first();
+
+        $cartData = Cart::where('user_id', $user->id)
+            ->where('product_id', $request->product_id)
+            ->first();
+
         if ($cartData) {
             $cartData->qty = $request->qty;
             $cartData->save();
             return response()->json([
-                'status' => true,
-                'message' => 'cart updated',
-                'data' => $cartData
+                'status'  => true,
+                'message' => 'Cart updated',
+                'data'    => $cartData
             ], 200);
         } else {
-
             $cart = new Cart;
             $cart->user_id = $user->id;
             $cart->product_id = $request->product_id;
             $cart->qty = $request->qty;
             $cart->save();
             return response()->json([
-                'status' => true,
-                'message' => 'product added to cart',
-                'data' => $cart
+                'status'  => true,
+                'message' => 'Product added to cart',
+                'data'    => $cart
             ], 200);
         }
     }
+
 
     public function remove($id)
     {
         $cart_item = Cart::findorFail($id);
         $cart_item->delete();
         return $this->successresponse(['status' => 200, 'message' => 'Removed successfully']);
-    }
-
-    public function quantity(Request $request)
-    {
-        $validation = [
-            'rowId'          => 'required',
-            'quantity'       => 'required|numeric',
-            'deliveryCharge' => 'required',
-        ];
-        $validator = Validator::make($request->all(), $validation);
-        if (!$validator->fails()) {
-            $carts = Cart::content()->toArray();
-            if (isset($carts[$request->rowId])) {
-                $menuItemId   = $carts[$request->rowId]['options']['menuItem_id'];
-                $variationId = (isset($carts[$request->rowId]['options']['variation']['id']) ? $carts[$request->rowId]['options']['variation']['id'] : null);
-                $restaurantId      = $carts[$request->rowId]['options']['restaurant_id'];
-                $cartQuantity =  $carts[$request->rowId]['qty'];
-                $menuItem     = MenuItem::find($menuItemId);
-                if (!blank($menuItem)) {
-                    Cart::update($request->rowId, $request->quantity);
-                    echo json_encode([
-                        'status'     => true,
-                        'price'      => currencyFormat(Cart::get($request->rowId)->price * Cart::get($request->rowId)->qty),
-                        'totalPrice' => currencyFormat(Cart::totalFloat()),
-                        'total'      => currencyFormat(Cart::totalFloat() + $request->deliveryCharge)
-                    ]);
-                }
-            } else {
-                echo json_encode([
-                    'status'  => false,
-                    'message' => 'cart not found.'
-                ]);
-            }
-        } else {
-            echo json_encode([
-                'status'  => false,
-                'message' => 'something wrong'
-            ]);
-        }
     }
 }

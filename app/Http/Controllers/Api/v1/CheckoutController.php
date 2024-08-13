@@ -401,7 +401,7 @@ class CheckoutController extends FrontendController
             if ($link['rel'] == 'approve') {
                 // return redirect()->away($link['href']);
                 return response()->json([
-                    'link' => $links,
+                    'link' => $links[1],
                 ]);
             }
         }

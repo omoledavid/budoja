@@ -14,12 +14,12 @@ class MenuItemResource extends JsonResource
      */
     public function toArray( $request )
     {
-        $restaurant = $this->restaurantSearch;
         return [
             "id"                => $this->id,
             "name"              => $this->name,
             "unit_price"        => $this->unit_price,
             "discount_price"    => $this->discount_price,
+            "cooking_time "    => $this->cooking_time ?? null    ,
             "image"             => $this->image,
             "description"       => strip_tags($this->description),
             "restaurant_id"     => $this->restaurant_id,

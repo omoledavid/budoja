@@ -163,7 +163,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('notification-order',                            [NotificationOrderController::class, 'index']); //done
     Route::put('notification-order/{id}/update',                [NotificationOrderController::class, 'orderAccept']); //done
     Route::put('notification-order-product-receive/{id}/update', [NotificationOrderController::class, 'OrderProductReceive']); //done
-    Route::put('notification-order-status/{id}/update',         [NotificationOrderController::class, 'orderStatus']); //done
+    Route::put('orders-status/{id}/update',         [NotificationOrderController::class, 'orderStatus']); //done
     Route::get('notification-order/{id}/show',                  [NotificationOrderController::class, 'show']); //done
     Route::get('notification-order/history',                    [NotificationOrderController::class, 'history']); //done
     Route::get('transactions',                                  [TransactionController::class, 'index']); //done

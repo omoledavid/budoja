@@ -22,10 +22,9 @@ class WishlistController extends Controller
 
         if ($user_id != null) {
             $wishlist_data = Wishlist::where('user_id', $user_id)
-                ->with('product')
-                ->whereHas('product', function ($q) {
-                    return $q->whereHas('categories');
-                })
+                ->with(['product' => function($q){
+                    $q->whereHas('restaurantSearch');
+                }])
                 ->get();
         } else {
             $s_id       = session()->get('session_id');
