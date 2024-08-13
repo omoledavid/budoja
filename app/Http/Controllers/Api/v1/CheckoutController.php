@@ -104,7 +104,7 @@ class CheckoutController extends FrontendController
             }
         }
     })->validate();
-    return 'got oherej';
+    
 
     if ($validator->fails()) {
         return response()->json([
@@ -112,7 +112,7 @@ class CheckoutController extends FrontendController
             'message' => $validator->errors(),
         ]);
     }
-
+    return 'got oherej';
     // Handle different payment methods
     session()->put('checkoutRequest', $request->all());
     $paymentType = $request->payment_type;
