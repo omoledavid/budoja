@@ -371,7 +371,7 @@ class CheckoutController extends FrontendController
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
         $paypalToken = $provider->getAccessToken();
-
+        return $totalAmount;
         $response = $this->createPaypalOrder($provider, $totalAmount);
         if (isset($response['id']) && $response['id'] != null) {
             return $this->redirectPaypalApproval($response['links']);
@@ -380,14 +380,11 @@ class CheckoutController extends FrontendController
                 'status' => false,
                 'data' => $response,
             ]);
-            return redirect(route('checkout.index'))->withError('You have canceled the transaction.');
         }
     }
 
     protected function createPaypalOrder($provider, $totalAmount)
     {
-        $formattedAmount = number_format((float) $totalAmount, 2, '.', '');
-        return $formattedAmount;
         return $provider->createOrder([
             'intent' => 'CAPTURE',
             'application_context' => [
@@ -398,7 +395,7 @@ class CheckoutController extends FrontendController
                 [
                     'amount' => [
                         'currency_code' => 'USD',
-                        'value' => $formattedAmount,
+                        'value' => $totalAmount,
                     ],
                 ],
             ],
