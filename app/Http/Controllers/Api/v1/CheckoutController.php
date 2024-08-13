@@ -93,6 +93,7 @@ class CheckoutController extends FrontendController
         $totalAmount = $cart->sum(function ($item) {
             return $item->product->unit_price * $item->qty;
         });
+        $totalAmount = (float) $totalAmount;
 
 
         // Perform validation
@@ -385,7 +386,6 @@ class CheckoutController extends FrontendController
 
     protected function createPaypalOrder($provider, $totalAmount)
     {
-        return $totalAmount;
         return $provider->createOrder([
             'intent' => 'CAPTURE',
             'application_context' => [
