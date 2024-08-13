@@ -16,7 +16,7 @@ class PaymentService
     public function payment($paymetSuccess)
     {
         $user = auth()->user();
-        // return dd(session()->get('checkoutRequest'));
+
         $resturantExist = Cart::where('user_id', 8)->first();
         $cartProduct = MenuItem::where('id', 1)->first();
 
@@ -62,12 +62,10 @@ class PaymentService
             $this->data['paid_amount'] = session()->get('cart')['totalAmount'] + $delivery_charge;
             $this->data['payment_method'] = $request['payment_type'];
             $this->data['payment_status'] = PaymentStatus::PAID;
-
         } elseif ($request['payment_type'] == PaymentMethod::PHONEPE) {
             $this->data['paid_amount'] = session()->get('cart')['totalAmount'] + $delivery_charge;
             $this->data['payment_method'] = $request['payment_type'];
             $this->data['payment_status'] = PaymentStatus::PAID;
-
         } elseif ($request['payment_type'] == PaymentMethod::WALLET) {
 
             $this->data['paid_amount'] = session()->get('cart')['totalAmount'] + $delivery_charge;

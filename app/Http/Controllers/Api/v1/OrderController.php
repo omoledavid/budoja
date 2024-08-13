@@ -110,7 +110,6 @@ class OrderController extends Controller
         if (!$validator->fails()) {
             $cart = Cart::where('user_id', auth()->id())->with('product')->get();
             $orderItems = $cart;
-
             $items = [];
             if (!blank($orderItems)) {
                 $i                      = 0;
@@ -128,7 +127,6 @@ class OrderController extends Controller
                     $i++;
                 }
             }
-
             $request->request->add([
                 'items'           => $items,
                 'order_type'      => $request->order_type,

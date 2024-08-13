@@ -143,7 +143,7 @@ Route::group(['middleware' => ['installed', 'license-activate']], function () {
     Route::get('auth/{provider}/callback',                  [SocialController::class, 'loginWithSocial'])->name('callback');
 
     //paypal
-    Route::get('success-transaction',                       [CheckoutController::class, 'paypalSuccessTransaction'])->name('successTransaction');
+    Route::get('success-transaction/{id}',                       [CheckoutController::class, 'paypalSuccessTransaction'])->name('successTransaction');
     Route::get('cancel-transaction',                        [CheckoutController::class, 'paypalCancelTransaction'])->name('cancelTransaction');
 });
 

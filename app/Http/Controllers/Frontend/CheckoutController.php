@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use Anand\LaravelPaytmWallet\Facades\PaytmWallet;
+use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Http\Controllers\FrontendController;
 use App\Http\Services\PaymentService;
 use App\Http\Services\PushNotificationService;
@@ -16,6 +18,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Paystack;
 use Razorpay\Api\Api;
@@ -425,15 +428,12 @@ class CheckoutController extends FrontendController
 
     protected function handleOrderServiceResponse($orderService)
     {
-        if ($orderService->status) {
-            $order = Order::find($orderService->order_id);
-            $this->clearSessionData();
-            $this->sendOrderNotifications($order);
-            return $orderService;
-            return response()->json([
-                'status' => true,
-                'message' => 'Paypal Payment successful, Order complete'
-            ]);
+        if ($orderService) {
+            return Redirect::away('https://budoja.com//app/sucess');
+            // return response()->json([
+            //     'status' => true,
+            //     'message' => 'Paypal Payment successful, Order complete'
+            // ]);
         } else {
             return response()->json([
                 'status' => false,
@@ -470,7 +470,7 @@ class CheckoutController extends FrontendController
         return $orderService;
     }
 
-    public function paypalSuccessTransaction(Request $request)
+    public function paypalSuccessTransaction(Request $request, $id)
     {
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
@@ -478,9 +478,17 @@ class CheckoutController extends FrontendController
         $response = $provider->capturePaymentOrder($request['token']);
 
         if (isset($response['status']) && $response['status'] === 'COMPLETED') {
-            $orderService = app(PaymentService::class)->payment(true);
+            // $orderService = app(PaymentService::class)->payment(true);
+            $order = Order::find($id);
+            $order->payment_status = PaymentStatus::PAID;
+            $order->paid_amount = $order->total ?? 0;
+            $order->save();
+            $orderService = $order;
         } else {
-            $orderService = app(PaymentService::class)->payment(false);
+            // $orderService = app(PaymentService::class)->payment(true);
+            // $order = Order::find($id);
+            // return $order;
+            $orderService = null;
         }
 
         return $this->handleOrderServiceResponse($orderService);

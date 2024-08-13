@@ -20,6 +20,7 @@ class StripeService implements BasePaymentGateway
 
     public function payment( array $parameters )
     {
+        // return dd($parameters);
         $gateway = Omnipay::create('Stripe');
         $gateway->setApiKey($this->configaration());
         $response = $gateway->purchase($parameters)->send();

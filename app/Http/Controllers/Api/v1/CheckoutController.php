@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api\v1;
 
 use Anand\LaravelPaytmWallet\Facades\PaytmWallet;
 use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Http\Controllers\FrontendController;
+use App\Http\Requests\Api\OrderStoreRequest;
+use App\Http\Services\OrderService;
 use App\Http\Services\PaymentService;
 use App\Http\Services\PushNotificationService;
 use App\Http\Services\StripeService;
@@ -58,6 +61,7 @@ class CheckoutController extends FrontendController
     public function store(Request $request)
     {
         $user = auth()->user();
+        // $order_id = $this->createOrder($request);
 
         // Fetch cart items with product details
         $cart = Cart::where('user_id', $user->id)
@@ -113,6 +117,7 @@ class CheckoutController extends FrontendController
                 'message' => $validator->errors(),
             ]);
         }
+        
         // Handle different payment methods
         session()->put('checkoutRequest', $request->all());
         $paymentType = $request->payment_type;
@@ -126,7 +131,7 @@ class CheckoutController extends FrontendController
             case PaymentMethod::PHONEPE:
                 return $this->phonePePayment($request);
             case PaymentMethod::PAYPAL:
-                return $this->initiatePaypalPayment($totalAmount);
+                return $this->initiatePaypalPayment($request,$totalAmount);
             case PaymentMethod::SSLCOMMERZ:
                 return $this->sslcommerzPayment($request);
             case PaymentMethod::RAZORPAY:
@@ -316,7 +321,7 @@ class CheckoutController extends FrontendController
         $stripeParameters = [
             'amount' => $totalAmount,
             'currency' => 'USD',
-            'token' => request('stripeToken'),
+            'token' => request('token'),
             'description' => 'N/A',
         ];
 
@@ -370,12 +375,14 @@ class CheckoutController extends FrontendController
         return $this->handleOrderServiceResponse($orderService);
     }
 
-    protected function initiatePaypalPayment($totalAmount)
+    protected function initiatePaypalPayment($request, $totalAmount)
     {
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
         $paypalToken = $provider->getAccessToken();
-        $response = $this->createPaypalOrder($provider, $totalAmount);
+        $order_id = $this->createOrder($request);
+        $order_id = $order_id->order_id;
+        $response = $this->createPaypalOrder($provider, $totalAmount, $order_id);
         if (isset($response['id']) && $response['id'] != null) {
             return $this->redirectPaypalApproval($response['links']);
         } else {
@@ -386,12 +393,12 @@ class CheckoutController extends FrontendController
         }
     }
 
-    protected function createPaypalOrder($provider, $totalAmount)
+    protected function createPaypalOrder($provider, $totalAmount, $order_id)
     {
         return $provider->createOrder([
             'intent' => 'CAPTURE',
             'application_context' => [
-                'return_url' => route('successTransaction'),
+                'return_url' => route('successTransaction', $order_id),
                 'cancel_url' => route('cancelTransaction'),
             ],
             'purchase_units' => [
@@ -498,17 +505,22 @@ class CheckoutController extends FrontendController
         return $orderService;
     }
 
-    public function paypalSuccessTransaction(Request $request)
+    public function paypalSuccessTransaction(Request $request, $id)
     {
+        dd($id);
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
         $provider->getAccessToken();
         $response = $provider->capturePaymentOrder($request['token']);
 
         if (isset($response['status']) && $response['status'] === 'COMPLETED') {
-            $orderService = app(PaymentService::class)->payment(true);
+            // $orderService = app(PaymentService::class)->payment(true);
+            $order = Order::find($id);
+            return $order;
         } else {
-            $orderService = app(PaymentService::class)->payment(false);
+            // $orderService = app(PaymentService::class)->payment(false);
+            $order = Order::find($id);
+            return $order;
         }
 
         return $this->handleOrderServiceResponse($orderService);
@@ -517,5 +529,74 @@ class CheckoutController extends FrontendController
     public function paypalCancelTransaction(Request $request)
     {
         return redirect(route('checkout.index'))->withError('You have canceled the transaction.');
+    }
+    //my code
+    public function createOrder(Request $request)
+    {
+
+        $validator = new OrderStoreRequest();
+        $validator = Validator::make($request->all(), $validator->rules());
+
+        if (!$validator->fails()) {
+            $cart = Cart::where('user_id', auth()->id())->with('product')->get();
+            $orderItems = $cart;
+            $items = [];
+            if (!blank($orderItems)) {
+                $i                      = 0;
+                foreach ($orderItems as $item) {
+                    $items[$i] = [
+                        'restaurant_id'          => $item->product->restaurant_id,
+                        'menu_item_id'           => $item->product->id,
+                        'unit_price'             => (float) $item->product->unit_price,
+                        'quantity'               => (int) $item->qty,
+                        'discounted_price'       => (float) $item->product->discounted_price,
+                        'instructions'           => $item->instructions,
+                    ];
+                    $i++;
+                }
+            }
+            $request->request->add([
+                'items'           => $items,
+                'order_type'      => $request->order_type,
+                'restaurant_id'   => $items[0]['restaurant_id'],
+                'user_id'         => auth()->user()->id,
+                'mobile'          => auth()->user()->phone,
+                'total'           => $items[0]['unit_price'] * count($items),
+                'delivery_charge' => $request->delivery_charge,
+            ]);
+
+
+            if (($request->paid_amount == '' || $request->paid_amount == 0) || $request->payment_method == PaymentMethod::CASH_ON_DELIVERY) {
+                $request->request->add([
+                    'paid_amount'           => 0,
+                    'payment_method'        => $request->payment_type ?? PaymentMethod::CASH_ON_DELIVERY,
+                    'payment_status'        => PaymentStatus::UNPAID
+                ]);
+            } else {
+                $request->request->add([
+                    'paid_amount'           => $request->paid_amount,
+                    'payment_method'        => $request->payment_type,
+                    'payment_status'        => PaymentStatus::PAID
+                ]);
+            }
+
+            $orderService = app(OrderService::class)->order($request);
+
+
+            if ($orderService->status) {
+                $order = Order::find($orderService->order_id);
+                return $orderService;
+            } else {
+                return response()->json([
+                    'status'  => 401,
+                    'message' => $orderService->message,
+                ], 401);
+            }
+        } else {
+            return response()->json([
+                'status'  => 422,
+                'message' => $validator->errors(),
+            ], 422);
+        }
     }
 }
