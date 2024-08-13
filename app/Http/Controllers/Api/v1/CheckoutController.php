@@ -130,7 +130,12 @@ class CheckoutController extends FrontendController
                 return $this->processDefaultPayment();
             }
         } else {
-            return redirect()->route('login');
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You are not logged in',
+                ]);
+            }
         }
     }
 
