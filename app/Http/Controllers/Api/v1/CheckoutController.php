@@ -56,85 +56,85 @@ class CheckoutController extends FrontendController
     }
 
     public function store(Request $request)
-{
-    $user = auth()->user();
-    
-    // Fetch cart items with product details
-    $cart = Cart::where('user_id', $user->id)
-                ->with(['product' => function($q) {
-                    $q->select('id', 'restaurant_id', 'name', 'description', 'unit_price', 'discount_price');
-                }])
-                ->get();
-    
-    // Check if the cart is empty
-    if ($cart->isEmpty()) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Your cart is empty.',
-        ], 400);
-    }
+    {
+        $user = auth()->user();
 
-    // Get the first cart item's restaurant ID
-    $restaurantId = $cart->first()->product->restaurant_id;
+        // Fetch cart items with product details
+        $cart = Cart::where('user_id', $user->id)
+            ->with(['product' => function ($q) {
+                $q->select('id', 'restaurant_id', 'name', 'description', 'unit_price', 'discount_price');
+            }])
+            ->get();
 
-    $this->setDeliveryCharge($request);
-    $restaurant = Restaurant::find($restaurantId);
-
-    // Define validation rules
-    $validation = [
-        'mobile'      => 'required',
-        'payment_type' => 'required|numeric',
-    ];
-    
-    if (!$cart->first()->delivery_type) {
-        $validation['address'] = 'required|string';
-    }
-
-    $totalAmount = $cart->sum(function($item) {
-        return $item->product->unit_price * $item->qty;
-    });
-
-    
-    // Perform validation
-    $validator = Validator::make($request->all(), $validation);
-    $validator->after(function ($validator) use ($request, $totalAmount) {
-        if ($request->payment_type == PaymentMethod::WALLET) {
-            if ((float) auth()->user()->balance->balance < (float) ($totalAmount)) {
-                $validator->errors()->add('payment_type', 'The Credit balance is not enough for this payment.');
-            }
+        // Check if the cart is empty
+        if ($cart->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Your cart is empty.',
+            ], 400);
         }
-    })->validate();
-    
 
-    if ($validator->fails()) {
-        return response()->json([
-            'status' => false,
-            'message' => $validator->errors(),
-        ]);
+        // Get the first cart item's restaurant ID
+        $restaurantId = $cart->first()->product->restaurant_id;
+
+        $this->setDeliveryCharge($request);
+        $restaurant = Restaurant::find($restaurantId);
+
+        // Define validation rules
+        $validation = [
+            'mobile'      => 'required',
+            'payment_type' => 'required|numeric',
+        ];
+
+        if (!$cart->first()->delivery_type) {
+            $validation['address'] = 'required|string';
+        }
+
+        $totalAmount = $cart->sum(function ($item) {
+            return $item->product->unit_price * $item->qty;
+        });
+
+
+        // Perform validation
+        $validator = Validator::make($request->all(), $validation);
+        $validator->after(function ($validator) use ($request, $totalAmount) {
+            if ($request->payment_type == PaymentMethod::WALLET) {
+                if ((float) auth()->user()->balance->balance < (float) ($totalAmount)) {
+                    $validator->errors()->add('payment_type', 'The Credit balance is not enough for this payment.');
+                }
+            }
+        })->validate();
+
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors(),
+            ]);
+        }
+        // Handle different payment methods
+        session()->put('checkoutRequest', $request->all());
+        $paymentType = $request->payment_type;
+        switch ($paymentType) {
+            case PaymentMethod::STRIPE:
+                return $this->processStripePayment($restaurant, $totalAmount);
+            case PaymentMethod::PAYSTACK:
+                return $this->preparePaystackPaymentData($request);
+            case PaymentMethod::PAYTM:
+                return $this->payWithPaytm($request);
+            case PaymentMethod::PHONEPE:
+                return $this->phonePePayment($request);
+            case PaymentMethod::PAYPAL:
+                return $paymentType;
+                return $this->initiatePaypalPayment($totalAmount);
+            case PaymentMethod::SSLCOMMERZ:
+                return $this->sslcommerzPayment($request);
+            case PaymentMethod::RAZORPAY:
+                return $this->processRazorpayPayment($request);
+            default:
+                return $this->processDefaultPayment();
+        }
     }
-    // Handle different payment methods
-    session()->put('checkoutRequest', $request->all());
-    $paymentType = $request->payment_type;
-    return $paymentType;
-    switch ($paymentType) {
-        case PaymentMethod::STRIPE:
-            return $this->processStripePayment($restaurant, $totalAmount);
-        case PaymentMethod::PAYSTACK:
-            return $this->preparePaystackPaymentData($request);
-        case PaymentMethod::PAYTM:
-            return $this->payWithPaytm($request);
-        case PaymentMethod::PHONEPE:
-            return $this->phonePePayment($request);
-        case PaymentMethod::PAYPAL:
-            return $this->initiatePaypalPayment($totalAmount);
-        case PaymentMethod::SSLCOMMERZ:
-            return $this->sslcommerzPayment($request);
-        case PaymentMethod::RAZORPAY:
-            return $this->processRazorpayPayment($request);
-        default:
-            return $this->processDefaultPayment();
-    }
-}
 
 
     public function sslcommerzPayment($request)
@@ -319,9 +319,9 @@ class CheckoutController extends FrontendController
             'token' => request('stripeToken'),
             'description' => 'N/A',
         ];
-        
+
         $payment = $stripeService->payment($stripeParameters);
-        return 'here';  
+        return 'here';
         $orderService = $this->handlePaymentResponse($payment);
 
         if ($orderService->status) {
@@ -477,7 +477,7 @@ class CheckoutController extends FrontendController
 
     protected function sendOrderNotifications($order)
     {
-        try { 
+        try {
             app(PushNotificationService::class)->NotificationForRestaurant($order, $order->restaurant->user, 'restaurant');
             app(PushNotificationService::class)->NotificationForCustomer($order, auth()->user(), 'customer');
         } catch (\Exception $exception) {
