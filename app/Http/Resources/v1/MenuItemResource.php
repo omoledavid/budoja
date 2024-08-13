@@ -19,7 +19,7 @@ class MenuItemResource extends JsonResource
             "name"              => $this->name,
             "unit_price"        => $this->unit_price,
             "discount_price"    => $this->discount_price,
-            "cooking_time "    => $this->cooking_time ?? null    ,
+            "cooking_time"    => $this->cooking_time ?? null    ,
             "image"             => $this->image,
             "description"       => strip_tags($this->description),
             "restaurant_id"     => $this->restaurant_id,

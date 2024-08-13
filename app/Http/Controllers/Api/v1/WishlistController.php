@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\v1\WishlistResources;
 use App\Models\MenuItem;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class WishlistController extends Controller
         if ($user_id != null) {
             $wishlist_data = Wishlist::where('user_id', $user_id)
                 ->with(['product' => function($q){
-                    $q->whereHas('restaurantSearch');
+                    $q->with('restaurantSearch');
                 }])
                 ->get();
         } else {
@@ -43,7 +44,7 @@ class WishlistController extends Controller
         }
         return response()->json([
             'status' => true,
-            'data' => $wishlist_data
+            'data' => WishlistResources::collection($wishlist_data)
         ]);
     }
 
