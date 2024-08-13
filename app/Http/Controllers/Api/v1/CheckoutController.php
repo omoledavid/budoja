@@ -125,7 +125,6 @@ class CheckoutController extends FrontendController
             case PaymentMethod::PHONEPE:
                 return $this->phonePePayment($request);
             case PaymentMethod::PAYPAL:
-                return $paymentType;
                 return $this->initiatePaypalPayment($totalAmount);
             case PaymentMethod::SSLCOMMERZ:
                 return $this->sslcommerzPayment($request);
@@ -373,7 +372,7 @@ class CheckoutController extends FrontendController
         $paypalToken = $provider->getAccessToken();
 
         $response = $this->createPaypalOrder($provider, $totalAmount);
-        // return $response;
+        return $response;
         if (isset($response['id']) && $response['id'] != null) {
             return $this->redirectPaypalApproval($response['links']);
         } else {
