@@ -372,7 +372,6 @@ class CheckoutController extends FrontendController
         $paypalToken = $provider->getAccessToken();
 
         $response = $this->createPaypalOrder($provider, $totalAmount);
-        return $response;
         if (isset($response['id']) && $response['id'] != null) {
             return $this->redirectPaypalApproval($response['links']);
         } else {
