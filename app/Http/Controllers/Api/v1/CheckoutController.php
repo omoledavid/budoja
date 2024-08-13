@@ -56,88 +56,85 @@ class CheckoutController extends FrontendController
     }
 
     public function store(Request $request)
-    {
-        // $sessionRestaurantId = session('session_cart_restaurant_id');
-        // if (blank($sessionRestaurantId)) {
-            //     return redirect(route('checkout.index'))->withError('The Restaurant not found');
-            // }        
-            $user = auth()->user();
-            
-        $cart = Cart::where('user_id', $user->id)->with(['product' => function($q){
-            $q->select('id', 'restaurant_id', 'name', 'description', 'unit_price', 'discount_price');
-        }])->get();
-        $cartForId = Cart::where('user_id', $user->id)->with(['product' => function($q){
-            $q->select('id', 'restaurant_id', 'name', 'description', 'unit_price', 'discount_price');
-        }])->first();
-        $restaurantId = $cartForId->product->restaurant_id;
-
-        $this->setDeliveryCharge($request);
-        $restaurant = Restaurant::find($restaurantId);
-        $validator = $this->validateCheckoutRequest($request, $restaurant);
-        
-        if (!$cart || !isset($cart['delivery_type'])) {
-            $validation = [
-                'mobile' => 'required',
-                'address' => 'required|string',
-                'payment_type' => 'required|numeric',
-            ];
-        } else {
-            $validation = [
-                'mobile' => 'required',
-                'payment_type' => 'required|numeric',
-            ];
-        }
-        $totalAmount = 0;
-        foreach($cart as $item){
-            $totalAmount += $item->product->unit_price;
-        }
-        
-
-        $validator = Validator::make($request->all(), $validation);
-        $validator->after(function ($validator) use ($request, $restaurant, $totalAmount) {
-            if ($request->payment_type == PaymentMethod::WALLET) {
-                if ((float) auth()->user()->balance->balance < (float) ($totalAmount + session()->get('delivery_charge'))) {
-                    $validator->errors()->add('payment_type', 'The Credit balance is not enough for this payment.');
-                }
-            }
-        })->validate();
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validation,
-            ]);
-        }
-
-        if ($user) {
-            session()->put('checkoutRequest', $request->all());
-            $paymentType = $request->payment_type;
-            if ($paymentType == PaymentMethod::STRIPE) {
-                return $this->processStripePayment($restaurant, $totalAmount);
-            } elseif ($paymentType == PaymentMethod::PAYSTACK) {
-                return $this->preparePaystackPaymentData($request);
-            } elseif ($paymentType == PaymentMethod::PAYTM) {
-                return $this->payWithPaytm($request);
-            } elseif ($paymentType == PaymentMethod::PHONEPE) {
-                return $this->phonePePayment($request);
-            } elseif ($paymentType == PaymentMethod::PAYPAL) {
-                return $this->initiatePaypalPayment($totalAmount);
-            } elseif ($paymentType == PaymentMethod::SSLCOMMERZ) {
-                return $this->sslcommerzPayment($request);
-            } elseif ($paymentType == PaymentMethod::RAZORPAY) {
-                return $this->processRazorpayPayment($request);
-            } else {
-                return $this->processDefaultPayment();
-            }
-        } else {
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'You are not logged in',
-                ]);
-            }
-        }
+{
+    $user = auth()->user();
+    
+    // Fetch cart items with product details
+    $cart = Cart::where('user_id', $user->id)
+                ->with(['product' => function($q) {
+                    $q->select('id', 'restaurant_id', 'name', 'description', 'unit_price', 'discount_price');
+                }])
+                ->get();
+    
+    // Check if the cart is empty
+    if ($cart->isEmpty()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Your cart is empty.',
+        ], 400);
     }
+
+    // Get the first cart item's restaurant ID
+    $restaurantId = $cart->first()->product->restaurant_id;
+
+    $this->setDeliveryCharge($request);
+    $restaurant = Restaurant::find($restaurantId);
+
+    // Define validation rules
+    $validation = [
+        'mobile'      => 'required',
+        'payment_type' => 'required|numeric',
+    ];
+    
+    if (!$cart->first()->delivery_type) {
+        $validation['address'] = 'required|string';
+    }
+
+    $totalAmount = $cart->sum(function($item) {
+        return $item->product->unit_price * $item->qty;
+    });
+
+    // Perform validation
+    $validator = Validator::make($request->all(), $validation);
+    $validator->after(function ($validator) use ($request, $totalAmount) {
+        if ($request->payment_type == PaymentMethod::WALLET) {
+            if ((float) auth()->user()->balance->balance < (float) ($totalAmount + session()->get('delivery_charge'))) {
+                $validator->errors()->add('payment_type', 'The Credit balance is not enough for this payment.');
+            }
+        }
+    })->validate();
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => $validator->errors(),
+        ]);
+    }
+
+    // Handle different payment methods
+    session()->put('checkoutRequest', $request->all());
+    $paymentType = $request->payment_type;
+
+    switch ($paymentType) {
+        case PaymentMethod::STRIPE:
+            return $this->processStripePayment($restaurant, $totalAmount);
+        case PaymentMethod::PAYSTACK:
+            return $this->preparePaystackPaymentData($request);
+        case PaymentMethod::PAYTM:
+            return $this->payWithPaytm($request);
+        case PaymentMethod::PHONEPE:
+            return $this->phonePePayment($request);
+        case PaymentMethod::PAYPAL:
+            return $this->initiatePaypalPayment($totalAmount);
+        case PaymentMethod::SSLCOMMERZ:
+            return $this->sslcommerzPayment($request);
+        case PaymentMethod::RAZORPAY:
+            return $this->processRazorpayPayment($request);
+        default:
+            return $this->processDefaultPayment();
+    }
+}
+
 
     public function sslcommerzPayment($request)
     {
