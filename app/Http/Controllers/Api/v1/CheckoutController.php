@@ -112,11 +112,11 @@ class CheckoutController extends FrontendController
             'message' => $validator->errors(),
         ]);
     }
-    return 'got oherej';
     // Handle different payment methods
     session()->put('checkoutRequest', $request->all());
     $paymentType = $request->payment_type;
-
+    
+    return 'got oherej';
     switch ($paymentType) {
         case PaymentMethod::STRIPE:
             return $this->processStripePayment($restaurant, $totalAmount);
