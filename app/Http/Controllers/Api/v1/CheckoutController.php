@@ -387,6 +387,7 @@ class CheckoutController extends FrontendController
     protected function createPaypalOrder($provider, $totalAmount)
     {
         $formattedAmount = number_format((float) $totalAmount, 2, '.', '');
+        return $formattedAmount;
         return $provider->createOrder([
             'intent' => 'CAPTURE',
             'application_context' => [
