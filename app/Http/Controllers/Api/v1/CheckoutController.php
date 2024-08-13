@@ -94,6 +94,7 @@ class CheckoutController extends FrontendController
         return $item->product->unit_price * $item->qty;
     });
 
+    return 'got oherej';
     // Perform validation
     $validator = Validator::make($request->all(), $validation);
     $validator->after(function ($validator) use ($request, $totalAmount) {
