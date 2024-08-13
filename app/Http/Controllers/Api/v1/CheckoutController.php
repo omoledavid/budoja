@@ -98,7 +98,7 @@ class CheckoutController extends FrontendController
     $validator = Validator::make($request->all(), $validation);
     $validator->after(function ($validator) use ($request, $totalAmount) {
         if ($request->payment_type == PaymentMethod::WALLET) {
-            if ((float) auth()->user()->balance->balance < (float) ($totalAmount + session()->get('delivery_charge'))) {
+            if ((float) auth()->user()->balance->balance < (float) ($totalAmount)) {
                 $validator->errors()->add('payment_type', 'The Credit balance is not enough for this payment.');
             }
         }
