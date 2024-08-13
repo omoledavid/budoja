@@ -93,7 +93,7 @@ class CheckoutController extends FrontendController
         $totalAmount = $cart->sum(function ($item) {
             return $item->product->unit_price * $item->qty;
         });
-        $totalAmount = (float) $totalAmount;
+        $totalAmount = round((float) $totalAmount, 2);
 
 
         // Perform validation
