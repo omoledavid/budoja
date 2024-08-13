@@ -17,6 +17,7 @@ class OrderResource extends ResourceCollection
     {
         return [
             'status' => 200,
+            'nice' => 'not nice',
             'data'   => $this->collection
         ];
     }

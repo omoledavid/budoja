@@ -23,6 +23,7 @@ class BasicController extends Controller
     }
     public function index()
     {
+        return dd(session()->all());
         $products = MenuItem::where('status', 5)->get();
 
         $data = MenuItemResource::collection($products);

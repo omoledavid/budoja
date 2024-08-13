@@ -328,7 +328,11 @@ class CheckoutController extends FrontendController
             $order = Order::find($orderService->order_id);
             $this->clearSessionData();
             $this->sendOrderNotifications($order);
-            return redirect(route('account.order.show', $order->id))->withSuccess('You order completed successfully.');
+            return response()->json([
+                'status' => true,
+                'message' => 'Stripe Payment successful, Order complete'
+            ]);
+            // return redirect(route('account.order.show', $order->id))->withSuccess('You order completed successfully.');
         } else {
             return redirect(route('checkout.index'))->withError($orderService->message);
         }
@@ -453,13 +457,12 @@ class CheckoutController extends FrontendController
             $order = Order::find($orderService->order_id);
             $this->clearSessionData();
             $this->sendOrderNotifications($order);
-            // return redirect(route('account.order.show', $order->id))->withSuccess('You order completed successfully.');
+            return $orderService;
             return response()->json([
                 'status' => true,
-                'message' => 'Payment successful, Order complete'
+                'message' => 'Paypal Payment successful, Order complete'
             ]);
         } else {
-            // return redirect(route('checkout.index'))->withError($orderService->message);
             return response()->json([
                 'status' => false,
                 'message' => 'Something went wrong'

@@ -16,8 +16,9 @@ class PaymentService
     public function payment($paymetSuccess)
     {
         $user = auth()->user();
-        $resturantExist = Cart::where('user_id', $user->id)->first();
-        $cartProduct = MenuItem::where('id', $resturantExist->product_id)->first();
+        // return dd(session()->get('checkoutRequest'));
+        $resturantExist = Cart::where('user_id', 8)->first();
+        $cartProduct = MenuItem::where('id', 1)->first();
 
         $restaurant = Restaurant::find($cartProduct->restaurant_id);
         $request = session()->get('checkoutRequest');
@@ -34,7 +35,7 @@ class PaymentService
 
         $items = [];
 
-        $cartItems = session()->get('cart')['items'] ?? [];
+        $cartItems = $resturantExist;
 
         foreach ($cartItems as $cart) {
             // $menuItemVariationId = $cart['variation']['id'] ?? null;
@@ -44,16 +45,14 @@ class PaymentService
 
             $items[] = [
                 'restaurant_id' => $restaurant->id,
-                'menu_item_variation_id' => $menuItemVariationId,
-                'menu_item_id' => $cart['menuItem_id'],
-                'unit_price' => (float) $cart['price'],
-                'quantity' => (int) $cart['qty'],
-                'discounted_price' => (float) $cart['discount'],
-                'variation' => $variation,
-                'options' => $options,
-                'instructions' => $instructions,
+                // 'menu_item_variation_id' => $menuItemVariationId,
+                'menu_item_id' => $cartProduct->id,
+                'unit_price' => (float) $cartProduct->unit_price,
+                'quantity' => (int) $cartProduct->qty,
+                'discounted_price' => (float) $cartProduct->discount_price,
             ];
         }
+        $request['payment_type'] = 10;
 
         if ($request['payment_type'] == PaymentMethod::STRIPE && $paymetSuccess) {
             $this->data['paid_amount'] = session()->get('cart')['totalAmount'] + $delivery_charge;
@@ -105,13 +104,15 @@ class PaymentService
 
         $this->data['items'] = $items;
         $this->data['order_type'] = $order_type;
-        $this->data['restaurant_id'] = session('session_cart_restaurant_id');
+        $this->data['restaurant_id'] = session('session_cart_restaurant_id') ?? 3;
         $this->data['user_id'] = auth()->user()->id;
         $this->data['total'] = isset($cart['totalAmount']) ? $cart['totalAmount'] : 0;
         $this->data['delivery_charge'] = $delivery_charge;
         $this->data['address'] = isset($request['address']) ? $request['address'] : '';
-        $this->data['mobile'] = $request['countrycode'] . $request['mobile'];
+        $this->data['mobile'] = 9835949594;
         $orderService = app(OrderService::class)->order($this->data);
+
+        $resturantExist->delete();
 
         return $orderService;
     }

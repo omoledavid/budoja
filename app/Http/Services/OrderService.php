@@ -496,8 +496,8 @@ class OrderService
                     'unit_price'                => $item['unit_price'],
                     'discounted_price'          => $item['discounted_price'],
                     'item_total'                => ($item['unit_price'] * $item['quantity']),
-                    'instructions'              => $item['instructions'],
-                    'options_total'             => $optionTotal,
+                    'instructions'              => $item['instructions'] ?? null,
+                    'options_total'             => $optionTotal ?? null,
                     'created_at'                => date('Y-m-d H:i:s'),
                     'updated_at'                => date('Y-m-d H:i:s'),
                 ];
