@@ -395,7 +395,6 @@ class CheckoutController extends FrontendController
                 [
                     'amount' => [
                         'currency_code' => 'USD',
-                        // 'currency_code' => setting('currency_name'),
                         'value' => $totalAmount,
                     ],
                 ],
