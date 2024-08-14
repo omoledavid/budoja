@@ -33,11 +33,11 @@ class RestaurantOrderController extends Controller
         if (!blank($orders)) {
             return response()->json([
                 'status' => 200,
-                'data'   => RestaurantOrderResource::collection($orders),
+                'data' => RestaurantOrderResource::collection($orders),
             ]);
         }
         return response()->json([
-            'status'  => 404,
+            'status' => 404,
             'message' => 'The data not found',
         ]);
     }
@@ -51,15 +51,14 @@ class RestaurantOrderController extends Controller
         if (!blank($orders)) {
             return response()->json([
                 'status' => 200,
-                'data'   => RestaurantOrderResource::collection($orders),
+                'data' => RestaurantOrderResource::collection($orders),
             ]);
         }
         return response()->json([
-            'status'  => 404,
+            'status' => 404,
             'message' => 'The data not found',
         ]);
     }
-
 
 
     public function show($id)
@@ -87,7 +86,7 @@ class RestaurantOrderController extends Controller
 
         if (auth()->user()->myrole != 3) {
             return response()->json([
-                'status'  => 401,
+                'status' => 401,
                 'message' => 'You don\'t have any permission to update order.',
             ], 401);
         }
@@ -97,85 +96,136 @@ class RestaurantOrderController extends Controller
             $orderService = app(OrderService::class)->orderUpdate($id, $request->status);
             if ($orderService->status) {
                 if ($request->status == OrderStatus::ACCEPT) {
-                    $role  = Role::find(4);
-                    $deliveryBoy    = User::role($role->name)->whereNotNull('device_token')->get();
+                    $role = Role::find(4);
+                    $deliveryBoy = User::role($role->name)->whereNotNull('device_token')->get();
                     $deliveryBoyWeb = User::role($role->name)->whereNotNull('web_token')->get();
                     if (!blank($deliveryBoy)) {
                         foreach ($deliveryBoy as $delivery) {
-                            app(PushNotificationService::class)->sendNotificationOrderUpdate($getOrder, $delivery,'deliveryboy');
+                            app(PushNotificationService::class)->sendNotificationOrderUpdate($getOrder, $delivery, 'deliveryboy');
                         }
                     }
                     if (!blank($deliveryBoyWeb)) {
                         foreach ($deliveryBoyWeb as $deliveryweb) {
-                            app(PushNotificationService::class)->sendNotificationOrderUpdate($getOrder, $deliveryweb,'deliveryboy');
+                            app(PushNotificationService::class)->sendNotificationOrderUpdate($getOrder, $deliveryweb, 'deliveryboy');
                         }
                     }
                 } else {
                     if (!blank($getOrder->delivery_boy_id)) {
-                        app(PushNotificationService::class)->sendNotificationOrderUpdate($getOrder, $getOrder->delivery,'deliveryboy');
+                        app(PushNotificationService::class)->sendNotificationOrderUpdate($getOrder, $getOrder->delivery, 'deliveryboy');
 
                     }
                 }
-                app(PushNotificationService::class)->sendNotificationOrderUpdate($getOrder, $getOrder->user,'customer');
+                app(PushNotificationService::class)->sendNotificationOrderUpdate($getOrder, $getOrder->user, 'customer');
 
                 return response()->json([
-                    'status'  => 200,
+                    'status' => 200,
                     'message' => 'The order successfully updated',
-                    'data'    => $orderService,
+                    'data' => $orderService,
                 ], 200);
             }
             return response()->json([
-                'status'  => 401,
+                'status' => 401,
                 'message' => $orderService->message,
             ], 401);
         } else {
             return response()->json([
-                'status'  => 400,
+                'status' => 400,
                 'message' => 'Bad Request',
             ], 400);
         }
     }
-    public function acceptOrder($id){
+
+    public function acceptOrder($id)
+    {
         $user = auth()->user();
-        if($user->myrole != 3){
+        if ($user->myrole != 3) {
             return response()->json([
-                'status'  => 401,
+                'status' => 401,
                 'message' => 'You don\'t have any permission to accept this order.',
             ]);
         }
         $orderService = app(OrderService::class)->accept($id);
         $order = Order::find($id);
-        if ( $orderService->status ) {
+        if ($orderService->status) {
             return response()->json([
-                'status'  => 200,
+                'status' => 200,
                 'message' => 'Order accepted successfully',
-                'data'    => new OrderApiResource($order),
+                'data' => new OrderApiResource($order),
             ], 200);
         }
         return response()->json([
-            'status'  => 404,
+            'status' => 404,
             'message' => $orderService->message,
         ]);
     }
-    public function rejectOrder($id){
+
+    public function rejectOrder($id)
+    {
         $user = auth()->user();
-        if($user->myrole != 3){
+        if ($user->myrole != 3) {
             return response()->json([
-                'status'  => 401,
+                'status' => 401,
                 'message' => 'You don\'t have any permission to accept this order.',
             ]);
         }
         $orderService = app(OrderService::class)->reject($id);
         $order = Order::find($id);
-        if ( $orderService->status ) {
+        if ($orderService->status) {
             return response()->json([
-                'status'  => 200,
+                'status' => 200,
                 'message' => 'Order rejected successfully',
-                'data'    => new OrderApiResource($order),
+                'data' => new OrderApiResource($order),
             ], 200);
         }
         return response()->json([
-            'status'  => 404,
+            'status' => 404,
+            'message' => $orderService->message,
+        ]);
+    }
+
+    public function processOrder($id)
+    {
+        $user = auth()->user();
+        if ($user->myrole != 3) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'You don\'t have any permission to accept this order.',
+            ]);
+        }
+        $orderService = app(OrderService::class)->process($id);
+        $order = Order::find($id);
+        if ($orderService->status) {
+            return response()->json([
+                'status' => 200,
+                'message' => 'Order processed successfully',
+                'data' => new OrderApiResource($order),
+            ], 200);
+        }
+        return response()->json([
+            'status' => 404,
+            'message' => $orderService->message,
+        ]);
+    }
+    public function completedOrder($id)
+    {
+        $user = auth()->user();
+        if ($user->myrole != 3) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'You don\'t have any permission to accept this order.',
+            ]);
+        }
+        $orderService = app(OrderService::class)->completed($id);
+        $order = Order::find($id);
+        if ($orderService->status) {
+            return response()->json([
+                'status' => 200,
+                'message' => 'Order completed successfully',
+                'data' => new OrderApiResource($order),
+            ], 200);
+        }
+        return response()->json([
+            'status' => 404,
             'message' => $orderService->message,
         ]);
     }
