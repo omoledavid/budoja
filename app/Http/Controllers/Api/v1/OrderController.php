@@ -351,7 +351,7 @@ class OrderController extends Controller
 
     public function attachment($id)
     {
-        $order = Order::where(['id' => $id, 'user_id' => auth()->user()->id])->first();
+        $order = Order::query()->where(['id' => $id, 'user_id' => auth()->user()->id])->first();
         if (!blank($order)) {
             return response()->json([
                 'data'    => $order->image,
@@ -363,5 +363,13 @@ class OrderController extends Controller
             'status'  => 401,
             'message' => 'Bad Request',
         ], 401);
+    }
+    public function filter($status): \Illuminate\Http\JsonResponse
+    {
+        $orders = Order::query()->where('status', $status)->get();
+        return response()->json([
+            'status' => true,
+            'data' => OrderApiResource::collection($orders)
+        ]);
     }
 }

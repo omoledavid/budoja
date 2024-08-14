@@ -147,6 +147,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     //orders
     Route::get('orders', [OrderController::class, 'index']); //done
+    Route::get('orders-filter/{status}', [OrderController::class, 'filter']); //done
     Route::post('orders', [OrderController::class, 'store']); //done
     Route::put('orders/{id}', [OrderController::class, 'update']); //done
     Route::get('orders/{id}/show', [OrderController::class, 'show']); //done
@@ -159,6 +160,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('restaurant-reject-order/{id}', [RestaurantOrderController::class, 'rejectOrder']); //done
     Route::get('restaurant-process-order/{id}', [RestaurantOrderController::class, 'processOrder']); //done
     Route::get('restaurant-completed-order/{id}', [RestaurantOrderController::class, 'completedOrder']); //done
+
     Route::get('restaurant-order/history', [RestaurantOrderController::class, 'history']); //done
     Route::get('restaurant-order/{id}', [RestaurantOrderController::class, 'show']); //done
     Route::put('restaurant-order/{id}', [RestaurantOrderController::class, 'update']); //done
