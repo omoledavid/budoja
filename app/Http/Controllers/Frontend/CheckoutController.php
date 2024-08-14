@@ -523,7 +523,7 @@ class CheckoutController extends FrontendController
         $transaction->status                 = 1;
         $transaction->invoice_id             = $meta['invoice_id'];
         $transaction->order_id               = $meta['order_id'];
-        $transaction->shop_id                = $meta['shop_id'];
+        $transaction->restaurant_id                = $meta['restaurant_id'];
         $transaction->user_id                = $meta['user_id'];
         $transaction->meta                   = $meta;
         $transaction->save();
