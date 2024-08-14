@@ -113,6 +113,7 @@ class OtpLoginController extends Controller
             return response()->json([
                 'status' => 200,
                 'message'   => 'The Code re-generate successfully',
+                'code'      => $code,
             ], 200);
         } else {
             $otpArray['user_id']     = $user->id;
@@ -128,6 +129,7 @@ class OtpLoginController extends Controller
             return response()->json([
                 'status' => 200,
                 'message'   => 'The Code generate successfully',
+                'code' => $code
             ], 200);
         }
     }
@@ -183,12 +185,14 @@ class OtpLoginController extends Controller
                 $restaurant = !blank($user->restaurant) ? new RestaurantResource($user->restaurant) : [];
                 $waiter = 0;
             }
+            $user->email_verified_at = now();
+            $user->save();
 
             return (new PrivateUserResource($user))
                 ->additional([
                     'token'      => $token,
                     'restaurant' => $restaurant,
-                    'waiter'     => $waiter,
+//                    'waiter'     => $waiter,
                 ], 200);
         } else {
             return response()->json([

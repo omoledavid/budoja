@@ -138,7 +138,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('request-withdraw', [RequestWithdrawController::class, 'index']); //done
     Route::post('request-withdraw', [RequestWithdrawController::class, 'store']); //done
     Route::put('request-withdraw/{id}', [RequestWithdrawController::class, 'update']); //done
-    Route::delete('request-withdraw/{id}', [RequestWithdrawController::class, 'delete']); //done
+    Route::delete('request-withdraw/{id}', [RequestWithdrawController::class, 'destroy']); //done
     //reservation
     Route::get('reservation', [ReservationController::class, 'index']); //done
     Route::post('restaurant/reservation/booking', [ReservationController::class, 'store']); //done

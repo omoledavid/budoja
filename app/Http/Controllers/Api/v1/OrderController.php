@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Http\Resources\v1\RestaurantResource;
 use App\Http\Services\PushNotificationService;
 use Carbon\Carbon;
 use App\Models\Order;
@@ -32,7 +33,9 @@ use App\Models\Cart;
 class OrderController extends Controller
 {
     use ApiResponse;
+
     public $adminBalanceId = 1;
+
     /**
      * OrderController constructor.
      */
@@ -45,7 +48,7 @@ class OrderController extends Controller
     public function index()
     {
         $response = Order::where(['user_id' => auth()->user()->id])
-            ->select('id', 'user_id', 'total', 'payment_status', 'status', 'paid_amount', 'address', 'mobile', 'restaurant_id','product_received', 'payment_method', 'created_at')
+            ->select('id', 'user_id', 'total', 'payment_status', 'status', 'paid_amount', 'address', 'mobile', 'restaurant_id', 'product_received', 'payment_method', 'created_at')
             ->orderBy('id', 'desc')
             ->with('items')
             ->get();
@@ -59,8 +62,8 @@ class OrderController extends Controller
 
         $response->map(function ($post) {
             // $post['status_name']         = trans('order_status.' . $post->status);
-            $post['order_code']          = $post->order_code;
-            $post['address']             = orderAddress($post->address);
+            $post['order_code'] = $post->order_code;
+            $post['address'] = orderAddress($post->address);
             // $post['order_type']          = (int)$post->order_type;
             // $post['order_type_name']     = $post->getOrderType;
             $post['payment_method_name'] = trans('payment_method.' . $post->payment_method);
@@ -68,7 +71,8 @@ class OrderController extends Controller
             foreach ($post['items'] as $itemKey => $item) {
                 $post['items'][$itemKey]['created_at_convert'] = food_date_format($post->created_at);
                 $post['items'][$itemKey]['updated_at_convert'] = food_date_format($post->updated_at);
-                $post['items'][$itemKey]['menuItem']['image']  = $item['menuItem']->image;
+                $post['items'][$itemKey]['menuItem']['image'] = $item['menuItem']->image;
+                $post['items'][$itemKey]['restaurant']['image'] = $item['restaurant']->image;
             }
             return $post;
         });
@@ -112,43 +116,43 @@ class OrderController extends Controller
             $orderItems = $cart;
             $items = [];
             if (!blank($orderItems)) {
-                $i                      = 0;
+                $i = 0;
                 $menuItemVariationId = 0;
-                $options                = [];
+                $options = [];
                 foreach ($orderItems as $item) {
                     $items[$i] = [
-                        'restaurant_id'          => $item->product->restaurant_id,
-                        'menu_item_id'           => $item->product->id,
-                        'unit_price'             => (float) $item->product->unit_price,
-                        'quantity'               => (int) $item->qty,
-                        'discounted_price'       => (float) $item->product->discounted_price,
-                        'instructions'           => $item->instructions,
+                        'restaurant_id' => $item->product->restaurant_id,
+                        'menu_item_id' => $item->product->id,
+                        'unit_price' => (float)$item->product->unit_price,
+                        'quantity' => (int)$item->qty,
+                        'discounted_price' => (float)$item->product->discounted_price,
+                        'instructions' => $item->instructions,
                     ];
                     $i++;
                 }
             }
             $request->request->add([
-                'items'           => $items,
-                'order_type'      => $request->order_type,
-                'restaurant_id'   => $items[0]['restaurant_id'],
-                'user_id'         => auth()->user()->id,
-                'mobile'          => auth()->user()->phone,
-                'total'           => $items[0]['unit_price'] * count($items),
+                'items' => $items,
+                'order_type' => $request->order_type,
+                'restaurant_id' => $items[0]['restaurant_id'],
+                'user_id' => auth()->user()->id,
+                'mobile' => auth()->user()->phone,
+                'total' => $items[0]['unit_price'] * count($items),
                 'delivery_charge' => $request->delivery_charge,
             ]);
 
 
             if (($request->paid_amount == '' || $request->paid_amount == 0) || $request->payment_method == PaymentMethod::CASH_ON_DELIVERY) {
                 $request->request->add([
-                    'paid_amount'           => 0,
-                    'payment_method'        => PaymentMethod::CASH_ON_DELIVERY,
-                    'payment_status'        => PaymentStatus::UNPAID
+                    'paid_amount' => 0,
+                    'payment_method' => PaymentMethod::CASH_ON_DELIVERY,
+                    'payment_status' => PaymentStatus::UNPAID
                 ]);
             } else {
                 $request->request->add([
-                    'paid_amount'           => $request->paid_amount,
-                    'payment_method'        => $request->payment_type,
-                    'payment_status'        => PaymentStatus::PAID
+                    'paid_amount' => $request->paid_amount,
+                    'payment_method' => $request->payment_type,
+                    'payment_status' => PaymentStatus::PAID
                 ]);
             }
 
@@ -159,19 +163,19 @@ class OrderController extends Controller
                 $order = Order::find($orderService->order_id);
 
                 return response()->json([
-                    'status'  => 200,
+                    'status' => 200,
                     'message' => 'You order completed successfully.',
-                    'data'    => $this->orderResponse($order),
+                    'data' => $this->orderResponse($order),
                 ], 200);
             } else {
                 return response()->json([
-                    'status'  => 401,
+                    'status' => 401,
                     'message' => $orderService->message,
                 ], 401);
             }
         } else {
             return response()->json([
-                'status'  => 422,
+                'status' => 422,
                 'message' => $validator->errors(),
             ], 422);
         }
@@ -207,8 +211,8 @@ class OrderController extends Controller
             foreach ($response['items'] as $itemKey => $item) {
                 $response['items'][$itemKey]['created_at_convert'] = food_date_format($item->created_at);
                 $response['items'][$itemKey]['updated_at_convert'] = food_date_format($item->updated_at);
-                $response['items'][$itemKey]['options']            = json_decode($item->options);
-                $response['items'][$itemKey]['product']['image']   = $item['product']->images ?? '';
+                $response['items'][$itemKey]['options'] = json_decode($item->options);
+                $response['items'][$itemKey]['product']['image'] = $item['product']->images ?? '';
                 unset($response['items'][$itemKey]['product']['media']);
             }
         }
@@ -228,7 +232,7 @@ class OrderController extends Controller
             OrderStatus::CANCEL => 'Cancel'
         ];
 
-        if ((int) $id) {
+        if ((int)$id) {
             $order = Order::find($id);
             if (!blank($order)) {
                 if (isset($status[$request->status])) {
@@ -240,31 +244,31 @@ class OrderController extends Controller
                         } catch (\Exception $e) {
                         }
                         return response()->json([
-                            'status'  => 200,
+                            'status' => 200,
                             'message' => 'You order update successfully completed.',
-                            'data'    => $orderService
+                            'data' => $orderService
                         ], 200);
                     } else {
                         return response()->json([
-                            'status'  => 422,
+                            'status' => 422,
                             'message' => $orderService->message
                         ], 422);
                     }
                 } else {
                     return response()->json([
-                        'status'  => 422,
+                        'status' => 422,
                         'message' => 'The status not found',
                     ], 422);
                 }
             } else {
                 return response()->json([
-                    'status'  => 422,
+                    'status' => 422,
                     'message' => 'The order not found',
                 ], 422);
             }
         } else {
             return response()->json([
-                'status'  => 422,
+                'status' => 422,
                 'message' => 'The order id not found',
             ], 422);
         }
@@ -283,29 +287,29 @@ class OrderController extends Controller
                         app(TransactionService::class)->payment($order->user->balance_id, $this->adminBalanceId, $order->total, $order->id);
                     }
 
-                    $order->paid_amount    = $order->total;
+                    $order->paid_amount = $order->total;
                     $order->payment_method = $request->payment_method;
                     $order->payment_status = PaymentStatus::PAID;
                     $order->save();
                     return response()->json([
-                        'status'  => 200,
+                        'status' => 200,
                         'message' => 'Payment successfully complete',
                     ], 200);
                 } else {
                     return response()->json([
-                        'status'  => 422,
+                        'status' => 422,
                         'message' => 'Select your correct payment method',
                     ], 422);
                 }
             } else {
                 return response()->json([
-                    'status'  => 422,
+                    'status' => 422,
                     'message' => 'The order not found',
                 ], 422);
             }
         } else {
             return response()->json([
-                'status'  => 422,
+                'status' => 422,
                 'message' => 'The order id not found',
             ], 422);
         }
@@ -316,7 +320,7 @@ class OrderController extends Controller
         if ($id) {
             $order = Order::where([
                 'user_id' => auth()->id(),
-                'status'  => OrderStatus::PENDING
+                'status' => OrderStatus::PENDING
             ])->find($id);
             if (!blank($order)) {
                 $orderService = app(OrderService::class)->cancel($id);
@@ -326,24 +330,24 @@ class OrderController extends Controller
                     } catch (\Exception $e) {
                     }
                     return response()->json([
-                        'status'  => 200,
+                        'status' => 200,
                         'message' => 'You order cancel successfully',
                     ], 200);
                 } else {
                     return response()->json([
-                        'status'  => 422,
+                        'status' => 422,
                         'message' => $orderService->message
                     ], 422);
                 }
             } else {
                 return response()->json([
-                    'status'  => 422,
+                    'status' => 422,
                     'message' => 'The order not found',
                 ], 422);
             }
         } else {
             return response()->json([
-                'status'  => 422,
+                'status' => 422,
                 'message' => 'The order id not found',
             ], 422);
         }
@@ -354,16 +358,17 @@ class OrderController extends Controller
         $order = Order::query()->where(['id' => $id, 'user_id' => auth()->user()->id])->first();
         if (!blank($order)) {
             return response()->json([
-                'data'    => $order->image,
-                'status'  => 200,
+                'data' => $order->image,
+                'status' => 200,
                 'message' => 'Success',
             ], 200);
         }
         return response()->json([
-            'status'  => 401,
+            'status' => 401,
             'message' => 'Bad Request',
         ], 401);
     }
+
     public function filter($status): \Illuminate\Http\JsonResponse
     {
         $orders = Order::query()->where('status', $status)->get();

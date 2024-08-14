@@ -30,6 +30,12 @@ class LoginController extends Controller
         }
 
         $user = auth('api')->user();
+        if($user->email_verified_at == null){
+            return response()->json([
+                'status' => false,
+                'message' => 'Verify email to login',
+            ], 400);
+        }
         $role = $request->role;
         if ($role == UserRole::WAITER) {
             $restaurant = !blank($user->waiter->restaurant) ? new RestaurantResource($user->waiter->restaurant) : [];
@@ -60,7 +66,7 @@ class LoginController extends Controller
             ->additional([
                 'token' => $token,
                 'restaurant'  => $restaurant,
-                'waiter_id'  => $waiter,
+//                'waiter_id'  => $waiter,
             ]);
     }
 
