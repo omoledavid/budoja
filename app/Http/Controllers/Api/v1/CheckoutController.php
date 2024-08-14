@@ -585,7 +585,7 @@ class CheckoutController extends FrontendController
 
             if ($orderService->status) {
                 $order = Order::find($orderService->order_id);
-                $carts_data = Cart::where('session_id', session('session_id'))->orWhere('user_id', auth()->user()->id ?? null)->get();
+                $carts_data = Cart::where('user_id', auth()->user()->id ?? null)->get();
 
                 foreach ($carts_data as $cart) {
                     $cart->delete();

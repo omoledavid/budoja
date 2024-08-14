@@ -135,4 +135,48 @@ class RestaurantOrderController extends Controller
             ], 400);
         }
     }
+    public function acceptOrder($id){
+        $user = auth()->user();
+        if($user->myrole != 3){
+            return response()->json([
+                'status'  => 401,
+                'message' => 'You don\'t have any permission to accept this order.',
+            ]);
+        }
+        $orderService = app(OrderService::class)->accept($id);
+        $order = Order::find($id);
+        if ( $orderService->status ) {
+            return response()->json([
+                'status'  => 200,
+                'message' => 'Order accepted successfully',
+                'data'    => new OrderApiResource($order),
+            ], 200);
+        }
+        return response()->json([
+            'status'  => 404,
+            'message' => $orderService->message,
+        ]);
+    }
+    public function rejectOrder($id){
+        $user = auth()->user();
+        if($user->myrole != 3){
+            return response()->json([
+                'status'  => 401,
+                'message' => 'You don\'t have any permission to accept this order.',
+            ]);
+        }
+        $orderService = app(OrderService::class)->reject($id);
+        $order = Order::find($id);
+        if ( $orderService->status ) {
+            return response()->json([
+                'status'  => 200,
+                'message' => 'Order rejected successfully',
+                'data'    => new OrderApiResource($order),
+            ], 200);
+        }
+        return response()->json([
+            'status'  => 404,
+            'message' => $orderService->message,
+        ]);
+    }
 }

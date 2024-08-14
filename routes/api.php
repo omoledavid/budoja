@@ -155,6 +155,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('orders/cancel/{id}',                            [OrderController::class, 'orderCancel']); //done
 
     Route::get('restaurant-order',                              [RestaurantOrderController::class, 'index']); //done
+    Route::get('restaurant-accept-order/{id}',                              [RestaurantOrderController::class, 'acceptOrder']); //done
+    Route::get('restaurant-reject-order/{id}',                              [RestaurantOrderController::class, 'rejectOrder']); //done
     Route::get('restaurant-order/history',                      [RestaurantOrderController::class, 'history']); //done
     Route::get('restaurant-order/{id}',                         [RestaurantOrderController::class, 'show']); //done
     Route::put('restaurant-order/{id}',                         [RestaurantOrderController::class, 'update']); //done
