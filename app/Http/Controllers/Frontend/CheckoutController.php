@@ -491,7 +491,7 @@ class CheckoutController extends FrontendController
             $restaurant = Restaurant::where('id', $order->restaurant_id)->first();
             $owner = User::find($restaurant->user_id);
             $meta           = [
-                'shop_id'        => $order->shop_id,
+                'restaurant_id'        => $order->restaurant_id,
                 'order_id'       => $order->id,
                 'invoice_id'     => $order->invoice_id,
                 'user_id'        => $order->user_id,
