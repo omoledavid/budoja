@@ -27,7 +27,7 @@ class BankRequest extends FormRequest
     {
         return [
 
-            'user_id'             => ['required', 'numeric'],
+            'user_id'             => ['sometimes', 'numeric'],
             'bank_name'           => ['required', 'string'],
             'bank_code'           => ['nullable', 'string'],
             'recipient_name'      => ['nullable', 'string'],
@@ -36,7 +36,7 @@ class BankRequest extends FormRequest
             'mobile_agent_number' => ['nullable', 'numeric'],
             'paypal_id'           => ['nullable', 'string'],
             'upi_id'              => ['nullable', 'string'],
-            
+
         ];
     }
 
@@ -51,7 +51,7 @@ class BankRequest extends FormRequest
 
     private function uniqueAccountNumber($bankInfo)
     {
-        
+
         $bank = Bank::where('account_number',request('account_number'))->first();
         if(!blank($bank)){
             if($bankInfo != null){
@@ -62,6 +62,6 @@ class BankRequest extends FormRequest
         return false;
     }
 
-   
+
 
 }

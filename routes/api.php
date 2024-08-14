@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\v1\Auth\RegisterController;
 use App\Http\Controllers\Api\v1\Auth\SocialLoginController;
 use App\Http\Controllers\Api\v1\BannerController;
 use App\Http\Controllers\Api\v1\BasicController;
+use App\Http\Controllers\Api\v1\BankController;
 use App\Http\Controllers\Api\v1\CartController;
 use App\Http\Controllers\Api\v1\CategoryController;
 use App\Http\Controllers\Api\v1\CheckoutController;
@@ -60,6 +61,9 @@ Route::group(['prefix' => 'v1'], function () {
 
     //support ticket
     Route::apiResource('support', SupportTicketController::class);
+
+    //banks
+    Route::resource('bank',                               BankController::class);
 
     Route::post('login', [LoginController::class, 'action']);
     Route::post('social-login', [SocialLoginController::class, 'action']);

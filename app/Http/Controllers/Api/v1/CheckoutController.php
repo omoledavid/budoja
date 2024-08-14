@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\v1;
 use Anand\LaravelPaytmWallet\Facades\PaytmWallet;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Enums\paymentType;
+use App\Enums\TransactionType;
 use App\Http\Controllers\FrontendController;
 use App\Http\Requests\Api\OrderStoreRequest;
 use App\Http\Services\OrderService;
@@ -15,6 +17,8 @@ use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Restaurant;
+use App\Models\Transaction;
+use App\Models\User;
 use Dipesh79\LaravelPhonePe\LaravelPhonePe;
 use Exception;
 use Illuminate\Http\Request;
@@ -516,6 +520,17 @@ class CheckoutController extends FrontendController
         if (isset($response['status']) && $response['status'] === 'COMPLETED') {
             // $orderService = app(PaymentService::class)->payment(true);
             $order = Order::find($id);
+            $user = User::find($order->user_id);
+            $restaurant = Restaurant::where('id', $order->restaurant_id)->first();
+            $owner = User::find($restaurant->user_id);
+            $meta           = [
+                'shop_id'        => $order->shop_id,
+                'order_id'       => $order->id,
+                'invoice_id'     => $order->invoice_id,
+                'user_id'        => $order->user_id,
+                'payment_method' => PaymentMethod::PAYPAL,
+            ];
+            $this->addTransaction(TransactionType::PAYMENT, $user->balance_id,$owner->balance_id,$order->total,$meta);
             return $order;
         } else {
             // $orderService = app(PaymentService::class)->payment(false);
@@ -603,5 +618,20 @@ class CheckoutController extends FrontendController
                 'message' => $validator->errors(),
             ], 422);
         }
+    }
+    private function addTransaction($type, $source, $destination, $amount, $meta)
+    {
+        $transaction                         = new Transaction;
+        $transaction->type                   = $type;
+        $transaction->source_balance_id      = $source;
+        $transaction->destination_balance_id = $destination;
+        $transaction->amount                 = $amount;
+        $transaction->status                 = 1;
+        $transaction->invoice_id             = $meta['invoice_id'];
+        $transaction->order_id               = $meta['order_id'];
+        $transaction->shop_id                = $meta['shop_id'];
+        $transaction->user_id                = $meta['user_id'];
+        $transaction->meta                   = $meta;
+        $transaction->save();
     }
 }

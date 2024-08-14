@@ -17,19 +17,16 @@ class BankController extends BackendController
     public function __construct()
     {
         parent::__construct();
-
-        $this->middleware(['permission:bank'])->only('index');
-        $this->middleware(['permission:bank_create'])->only('create', 'store');
-        $this->middleware(['permission:bank_edit'])->only('edit', 'update');
-        $this->middleware(['permission:bank_show'])->only('show');
-        $this->middleware(['permission:bank_delete'])->only('destroy');
+        $this->middleware('auth:api');
     }
 
     public function index()
     {
-        $restaurants=Restaurant::with('user')->latest()->get();
-        $this->data['restaurants']     = $restaurants;
-        return view('admin.bank.index', $this->data);
+        $banks = Bank::query()->where('user_id', auth()->id())->get();
+        return response()->json([
+            'status' => true,
+            'data' => $banks
+        ], 200);
     }
 
     public function create()
@@ -41,21 +38,21 @@ class BankController extends BackendController
 
     public function store(BankRequest $request)
     {
-        $bank                      = new Bank;
-        $bank->user_id             = $request->user_id;
-        $bank->bank_name           = $request->bank_name;
-        $bank->bank_code           = $request->bank_code;
-        $bank->recipient_name      = $request->recipient_name;
-        $bank->account_number      = $request->account_number;
-        $bank->mobile_agent_name   = $request->mobile_agent_name;
+        $bank = new Bank;
+        $bank->user_id = auth()->id();
+        $bank->bank_name = $request->bank_name;
+        $bank->bank_code = $request->bank_code;
+        $bank->recipient_name = $request->recipient_name;
+        $bank->account_number = $request->account_number;
+        $bank->mobile_agent_name = $request->mobile_agent_name;
         $bank->mobile_agent_number = $request->mobile_agent_number;
-        $bank->paypal_id           = $request->paypal_id;
-        $bank->upi_id              = $request->upi_id;
+        $bank->paypal_id = $request->paypal_id;
+        $bank->upi_id = $request->upi_id;
         $bank->save();
         return response()->json([
             'status' => true,
             'message' => 'Bank created successfully',
-            'data'    => $bank
+            'data' => $bank
         ]);
     }
 
@@ -70,28 +67,38 @@ class BankController extends BackendController
 
     public function update(BankRequest $request, Bank $bank)
     {
-        $bank->user_id             = $request->user_id;
-        $bank->bank_name           = $request->bank_name;
-        $bank->bank_code           = $request->bank_code;
-        $bank->recipient_name      = $request->recipient_name;
-        $bank->account_number      = $request->account_number;
-        $bank->mobile_agent_name   = $request->mobile_agent_name;
+        $bank->user_id = $request->user_id;
+        $bank->bank_name = $request->bank_name;
+        $bank->bank_code = $request->bank_code;
+        $bank->recipient_name = $request->recipient_name;
+        $bank->account_number = $request->account_number;
+        $bank->mobile_agent_name = $request->mobile_agent_name;
         $bank->mobile_agent_number = $request->mobile_agent_number;
-        $bank->paypal_id           = $request->paypal_id;
-        $bank->upi_id              = $request->upi_id;
+        $bank->paypal_id = $request->paypal_id;
+        $bank->upi_id = $request->upi_id;
         $bank->save();
-        return redirect(route('admin.bank.index'))->withSuccess('The data updated successfully.');
+        return response()->json([
+            'status' => true,
+            'message' => 'Bank updated successfully',
+            'data' => $bank
+        ]);
     }
 
     public function show(Bank $bank)
     {
-        return view('admin.bank.show', compact('bank'));
+        return response()->json([
+            'status' => true,
+            'data' => $bank
+        ]);
     }
 
     public function destroy($id)
     {
         Bank::findOrFail($id)->delete();
-        return redirect(route('admin.bank.index'))->withSuccess('The data deleted successfully.');
+        return response()->json([
+            'status' => true,
+            'message' => 'Bank deleted successfully',
+        ]);
     }
 
     public function getBank(Request $request)
@@ -100,11 +107,11 @@ class BankController extends BackendController
 
 
             $auth = auth();
-            $banks = Bank::where(function($query) use($auth, $request) {
-                if($auth->user()->myrole != 1) {
+            $banks = Bank::where(function ($query) use ($auth, $request) {
+                if ($auth->user()->myrole != 1) {
                     return $query->where('user_id', $auth->user()->id);
                 } else {
-                    if($request->user_id != 0) {
+                    if ($request->user_id != 0) {
                         return $query->where('user_id', $request->user_id);
                     }
                 }
@@ -121,8 +128,8 @@ class BankController extends BackendController
                         $retAction .= '<a href="' . route('admin.bank.show', $bank) . '" class="btn btn-sm btn-icon ml-2  float-left btn-info" data-toggle="tooltip" data-placement="top" title="View"><i class="far fa-eye"></i></a>';
                     }
                     if (auth()->user()->can('bank_delete')) {
-                        $retAction .= '<form  id="detete-'.$bank->id.'" class="float-left pl-2" action="' . route('admin.bank.destroy', $bank) . '" method="POST">' . method_field('DELETE') . csrf_field() .
-                            '<button type="button" data-id="'.$bank->id.'"
+                        $retAction .= '<form  id="detete-' . $bank->id . '" class="float-left pl-2" action="' . route('admin.bank.destroy', $bank) . '" method="POST">' . method_field('DELETE') . csrf_field() .
+                            '<button type="button" data-id="' . $bank->id . '"
                         class="btn btn-sm btn-icon btn-danger delete confirm-delete"  data-toggle="modal" data-target="#exampleModal" title="Delete">
                         <i class="fa fa-trash"></i>
                         </button> </form>';
@@ -132,19 +139,15 @@ class BankController extends BackendController
                 ->editColumn('id', function ($bank) use (&$i) {
                     return ++$i;
                 })
-
                 ->editColumn('bank_name', function ($bank) {
                     return $bank->bank_name;
                 })
-
                 ->editColumn('account_number', function ($bank) {
                     return $bank->account_number;
                 })
-
                 ->editColumn('mobile_agent_name', function ($bank) {
                     return $bank->mobile_agent_name;
                 })
-
                 ->escapeColumns([])
                 ->make(true);
         }
