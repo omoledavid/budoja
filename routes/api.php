@@ -38,6 +38,7 @@ use App\Http\Controllers\Api\v1\TimeSlotController;
 use App\Http\Controllers\Api\v1\TransactionController;
 use App\Http\Controllers\Api\v1\WishlistController;
 use App\Http\Controllers\Api\v1\WithdrawController;
+use App\Http\Controllers\Api\v1\Auth\ForgotPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -58,6 +59,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('all-restaurants', [BasicController::class, 'getRestaurant']);
     Route::get('products/{id}', [BasicController::class, 'show']);
     Route::get('/search', [BasicController::class, 'search']); //done
+    Route::post('reset', [ForgotPasswordController::class, 'sendResetLinkEmail']); //done
 
     //support ticket
     Route::apiResource('support', SupportTicketController::class);
