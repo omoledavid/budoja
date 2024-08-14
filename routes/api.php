@@ -94,7 +94,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('banners', [BannerController::class, 'index']);
     Route::post('sort-banner', [BannerController::class, 'sortBanner'])->name('sort.banner');
 
-    Route::get('category', [CategoryController::class, 'index']); //done
+    Route::get('category', [BasicController::class, 'categories']); //done
     Route::get('category/{id}', [CategoryController::class, 'index']); //done
     Route::get('category/{id}/show', [CategoryController::class, 'show']); //done
 

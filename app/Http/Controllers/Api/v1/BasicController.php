@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Enums\CategoryStatus;
 use App\Enums\RestaurantStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\v1\CategoryResource;
 use App\Http\Resources\v1\MenuItemResource;
 use App\Http\Resources\v1\RestaurantResource;
 use App\Http\Services\MenuItemService;
+use App\Models\Category;
 use App\Models\MenuItem;
 use App\Models\Restaurant;
 use App\Traits\ApiResponse;
@@ -18,7 +21,7 @@ class BasicController extends Controller
     protected  $menuItemService;
     public function __construct(MenuItemService $menuItemService)
     {
-        // parent::__construct();  
+        // parent::__construct();
         $this->menuItemService = $menuItemService;
     }
     public function index()
@@ -126,5 +129,22 @@ class BasicController extends Controller
             'status' => true,
             'data' => RestaurantResource::collection($restaurant)
         ]);
+    }
+    public function categories(Request $request)
+    {
+
+        try{
+            $data = Category::where('status', CategoryStatus::ACTIVE)->get();
+            return response()->json([
+                'status' => true,
+                'data' => CategoryResource::collection($data)
+            ]);
+        } catch (\Exception $e){
+            return response()->json([
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+                'trace' => $e->getTrace(),
+            ]);
+        }
     }
 }
