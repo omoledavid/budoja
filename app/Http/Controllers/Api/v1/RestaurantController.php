@@ -72,12 +72,12 @@ class RestaurantController extends BackendController
                 'status' => true,
                 'data' => $statistics,  // Include the array or object data in the response
             ]);
-            try {
-                $statistics = $this->restaurantService->show($id);
-                return 'working'.$statistics;
-            } catch(\Exception){
-                return 'not working';
-            }
+//            try {
+//                $statistics = $this->restaurantService->show($id);
+//                return 'working'.$statistics;
+//            } catch(\Exception){
+//                return 'not working';
+//            }
         }
         $this->data['restaurant'] = Restaurant::findOrFail($id);
         $rating      = new RatingsService();
@@ -145,6 +145,8 @@ class RestaurantController extends BackendController
         $restaurant->name            = $request->name;
         $restaurant->description     = $request->description;
         $restaurant->address         = $request->address;
+        $restaurant->lat             = $request->lat;
+        $restaurant->long            = $request->long;
         $restaurant->current_status  = 0;
         $restaurant->status          = RestaurantStatus::ACTIVE;
         $restaurant->applied         = true;
@@ -189,6 +191,6 @@ class RestaurantController extends BackendController
             'status' => true,
             'data' => new RestaurantResource($restaurant),
             'message' => 'Restaurant details updated successfully'
-        ]); 
+        ]);
     }
 }

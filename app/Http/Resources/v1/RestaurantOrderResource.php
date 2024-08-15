@@ -49,6 +49,7 @@ class RestaurantOrderResource extends JsonResource
             'items' => OrderItemsResource::collection(
                 $this->items
             ),
+            'user' => new UserResource($this->user)
 //            'deliveryBoy' => $this->delivery_boy_id == null?null:new UserResource($this->delivery),
 
         ];

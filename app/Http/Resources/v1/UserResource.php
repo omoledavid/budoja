@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             "email"      => $this->email,
             "phone"      => $this->phone,
             "roles"      => $this->roles,
-            "address"    => $this->address,
+            "address"    => $this->addresses,
             "username"   => $this->username,
             "balance"    => $this->balance->balance,
             "status"     => (int)$this->status,

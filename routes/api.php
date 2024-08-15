@@ -99,9 +99,9 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('category/{id}/show', [CategoryController::class, 'show']); //done
 
     Route::get('address', [AddressController::class, 'index']); //done
-    Route::post('address-store', [AddressController::class, 'store']); //done
-    Route::put('address-update/update/{id}', [AddressController::class, 'update']);
-    Route::delete('address-delete/{id}', [AddressController::class, 'destroy']); //done
+    Route::post('address', [AddressController::class, 'store']); //done
+    Route::put('address/update/{id}', [AddressController::class, 'update']);
+    Route::delete('address/{id}', [AddressController::class, 'destroy']); //done
 
     Route::get('cuisine', [CuisineController::class, 'index']); //done
     Route::get('cuisine/{id}', [CuisineController::class, 'index']); //done

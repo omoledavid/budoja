@@ -40,6 +40,7 @@ class AddressRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             if ($this->uniqueOtherLabel()) {
+                AddressType::
                 $validator->errors()->add('label_name', 'This Label is already created!');
             }
             if (request('label') == AddressType::OTHER && blank(request('label_name'))) {
