@@ -56,6 +56,12 @@ class RestaurantController extends BackendController
     public function restaurant(){
         $user = auth()->user();
         $data = Restaurant::where('user_id', $user->id)->first();
+        if(!$data){
+            return response()->json([
+                'status' => false,
+                'message' => 'Restaurant not found',
+            ],404);
+        }
         $restaurant = new RestaurantResource($data);
         return response()->json([
             'status' => true,
@@ -72,12 +78,6 @@ class RestaurantController extends BackendController
                 'status' => true,
                 'data' => $statistics,  // Include the array or object data in the response
             ]);
-//            try {
-//                $statistics = $this->restaurantService->show($id);
-//                return 'working'.$statistics;
-//            } catch(\Exception){
-//                return 'not working';
-//            }
         }
         $this->data['restaurant'] = Restaurant::findOrFail($id);
         $rating      = new RatingsService();

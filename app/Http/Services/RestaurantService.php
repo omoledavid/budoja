@@ -59,7 +59,10 @@ class RestaurantService
             $this->data['cuisines'] = Cuisine::where(['status' => Status::ACTIVE])->get();
             return $this->data;
         }
-        $restaurant = Restaurant::restaurantowner()->findOrFail($id);
+        $restaurant = Restaurant::restaurantowner()->find($id);
+        if(!$restaurant){
+            return 'Restaurant not found';
+        }
         if (blank($restaurant->user)) {
             $this->data['error']='the user not found';
             return $this->data;

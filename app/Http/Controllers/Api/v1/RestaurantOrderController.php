@@ -26,7 +26,16 @@ class RestaurantOrderController extends Controller
 
     public function index()
     {
-        $restaurant_id = auth()->user()->restaurant->id;
+        $user = auth()->user();
+
+        if (!$user || !$user->restaurant) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Restaurant not found for this user',
+            ], 404);
+        }
+
+        $restaurant_id = $user->restaurant->id;
 
         $orders = Order::where(['restaurant_id' => $restaurant_id])->orderBy('id', 'desc')->get();
 
