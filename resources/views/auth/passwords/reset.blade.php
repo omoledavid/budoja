@@ -8,7 +8,7 @@
                     <div class="card mx-auto">
                         <div class="card-header">{{ __('Reset Password') }}</div>
                         <div class="card-body p-lg-4 p-3">
-                            <form method="POST" action="{{ route('password.update') }}">
+                            <form method="POST" action="{{ route('account.password.update') }}">
                                 @csrf
 
                                 <input type="hidden" name="token" value="{{ $token }}">
