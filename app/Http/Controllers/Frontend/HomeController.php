@@ -21,13 +21,15 @@ class HomeController extends FrontendController
 
     public function index()
     {
+        return redirect()->away('https://budoja.com/login');
         $this->data['vouchers']               = $this->getValidVouchers();
         $this->data['cuisines']               = $this->getActiveCuisines();
         $this->data['bestSellingRestaurants'] = $this->getBestSellingRestaurants();
         $this->data['bestSellingCuisines']    = $this->getBestSellingCuisines();
         $this->data['current_data']           =  now()->format('H:i:s');
-        return view('frontend.home', $this->data);
+//        return view('frontend.home', $this->data);
     }
+
     public function testing(){
         return response()->json(
             'hello'
