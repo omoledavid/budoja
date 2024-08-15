@@ -28,6 +28,9 @@ class HomeController extends FrontendController
         $this->data['current_data']           =  now()->format('H:i:s');
         return view('frontend.home', $this->data);
     }
+    public function testing(){
+        return view('frontend.testing');
+    }
 
     private function getValidVouchers()
     {
