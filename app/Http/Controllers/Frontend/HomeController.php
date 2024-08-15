@@ -29,7 +29,9 @@ class HomeController extends FrontendController
         return view('frontend.home', $this->data);
     }
     public function testing(){
-        return view('frontend.testing');
+        return response()->json(
+            'hello'
+        );
     }
 
     private function getValidVouchers()
