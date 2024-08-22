@@ -13,6 +13,7 @@ use App\Models\Category;
 use App\Models\MenuItem;
 use App\Models\Restaurant;
 use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BasicController extends Controller
@@ -146,5 +147,13 @@ class BasicController extends Controller
                 'trace' => $e->getTrace(),
             ]);
         }
+    }
+    public function info(): JsonResponse
+    {
+        return response()->json([
+            'status' => true,
+            'policy' => 'policy will go here',
+            'about' => 'about us will go here'
+        ]);
     }
 }

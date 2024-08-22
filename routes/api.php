@@ -59,6 +59,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('all-restaurants', [BasicController::class, 'getRestaurant']);
     Route::get('products/{id}', [BasicController::class, 'show']);
     Route::get('/search', [BasicController::class, 'search']); //done
+    Route::get('info', [BasicController::class, 'info']); //done
     Route::post('reset', [ForgotPasswordController::class, 'sendResetLinkEmail']); //done
 
     //support ticket
