@@ -153,7 +153,8 @@ class BasicController extends Controller
         return response()->json([
             'status' => true,
             'policy' => 'policy will go here',
-            'about' => 'about us will go here'
+            'about' => 'about us will go here',
+            'terms&conditions' => 'terms and conditions will go here'
         ]);
     }
 }
