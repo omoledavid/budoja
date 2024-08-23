@@ -50,43 +50,43 @@
                 <div class="col-12 col-md-3 col-lg-3">
                     <div class="card">
                         <div class="card-body">
-                            <div class="form-row">
-                                <div class="form-group col">
-                                    <label>{{ __('levels.footer_menu_section') }}</label> <span class="text-danger">*</span>
-                                    <select name="footer_menu_section_id"
-                                        class="form-control @error('footer_menu_section_id') is-invalid @enderror">
-                                        <option value="">{{ __('Select Section') }}</option>
-                                        @if(!blank($footer_menu_sections))
-                                            @foreach($footer_menu_sections as $footer_menu_section)
-                                            <option value="{{ $footer_menu_section->id }}"
-                                                {{ (old('footer_menu_section_id',$page->footer_menu_section_id) == $footer_menu_section->id) ? 'selected' : '' }}>
-                                                {{ $footer_menu_section->name }}</option>
-                                            @endforeach
-                                        @endif
+{{--                            <div class="form-row">--}}
+{{--                                <div class="form-group col">--}}
+{{--                                    <label>{{ __('levels.footer_menu_section') }}</label> <span class="text-danger">*</span>--}}
+{{--                                    <select name="footer_menu_section_id"--}}
+{{--                                        class="form-control @error('footer_menu_section_id') is-invalid @enderror">--}}
+{{--                                        <option value="">{{ __('Select Section') }}</option>--}}
+{{--                                        @if(!blank($footer_menu_sections))--}}
+{{--                                            @foreach($footer_menu_sections as $footer_menu_section)--}}
+{{--                                            <option value="{{ $footer_menu_section->id }}"--}}
+{{--                                                {{ (old('footer_menu_section_id',$page->footer_menu_section_id) == $footer_menu_section->id) ? 'selected' : '' }}>--}}
+{{--                                                {{ $footer_menu_section->name }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        @endif--}}
 
-                                    </select> @error('footer_menu_section_id') <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col">
-                                    <label>{{ __('levels.template') }}</label> <span class="text-danger">*</span>
-                                    <select name="template_id" class="form-control @error('template_id') is-invalid @enderror">
-                                        @if(!blank($templates))
-                                            @foreach($templates as $template)
-                                                <option value="{{ $template->id }}" {{ (old('template_id', $page->template_id) == $template->id) ? 'selected' : '' }}>
-                                                    {{ ucfirst($template->name) }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                    @error('template_id') <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
+{{--                                    </select> @error('footer_menu_section_id') <div class="invalid-feedback">--}}
+{{--                                        {{ $message }}--}}
+{{--                                    </div>--}}
+{{--                                    @enderror--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="form-row">--}}
+{{--                                <div class="form-group col">--}}
+{{--                                    <label>{{ __('levels.template') }}</label> <span class="text-danger">*</span>--}}
+{{--                                    <select name="template_id" class="form-control @error('template_id') is-invalid @enderror">--}}
+{{--                                        @if(!blank($templates))--}}
+{{--                                            @foreach($templates as $template)--}}
+{{--                                                <option value="{{ $template->id }}" {{ (old('template_id', $page->template_id) == $template->id) ? 'selected' : '' }}>--}}
+{{--                                                    {{ ucfirst($template->name) }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        @endif--}}
+{{--                                    </select>--}}
+{{--                                    @error('template_id') <div class="invalid-feedback">--}}
+{{--                                        {{ $message }}--}}
+{{--                                    </div>--}}
+{{--                                    @enderror--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
                             <div class="form-row">
                                 <div class="form-group col">
                                     <label>{{ __('levels.status') }}</label> <span class="text-danger">*</span>

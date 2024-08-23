@@ -53,6 +53,7 @@ use App\Http\Controllers\Admin\RestaurantOwnerController;
 use App\Http\Controllers\Frontend\FrontendPageController;
 use App\Http\Controllers\Frontend\LocalizationController;
 use App\Http\Controllers\Admin\CollectionReportController;
+use App\Http\Controllers\Admin\ManageFrontendPageController;
 use App\Http\Controllers\Admin\PushNotificationController;
 use App\Http\Controllers\Admin\OrderNotificationController;
 use App\Http\Controllers\Admin\ReservationReportController;
@@ -165,6 +166,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'installed', 'licens
     Route::post('profile/save-address',                     [ProfileController::class, 'saveAddress'])->name('profile.save-address');
     Route::delete('profile/delete-address/{id}',            [ProfileController::class, 'deleteAddress'])->name('profile.delete-address');
     Route::put('profile/profileBank/{bank}',                [ProfileController::class, 'profileBank'])->name('profile-bank');
+
+    //frontend
+    Route::get('policy', [ManageFrontendPageController::class, 'policy'])->name('policy');
 
     Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {
         Route::get('/',                                     [SettingController::class, 'index'])->name('index');

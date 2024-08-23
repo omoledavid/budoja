@@ -1,21 +1,23 @@
 <div class="main-sidebar">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="{{ route('admin.dashboard.index') }}"><img style="padding: 10px;" src="{{ asset("images/".setting('site_logo')) }}" alt=""></a>
+            <a href="{{ route('admin.dashboard.index') }}"><img style="padding: 10px;"
+                                                                src="{{ asset("images/".setting('site_logo')) }}"
+                                                                alt=""></a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
             <a href="{{ route('admin.dashboard.index') }}">
                 <?php
-                    if(setting('site_name')) {
-                        $sitenames = explode(' ', setting('site_name'));
-                        if(count($sitenames) > 1) {
-                            foreach ($sitenames as $sitename) {
-                                echo $sitename[0];
-                            }
-                        } else {
-                            echo substr(setting('site_name'), 0, 2);
+                if (setting('site_name')) {
+                    $sitenames = explode(' ', setting('site_name'));
+                    if (count($sitenames) > 1) {
+                        foreach ($sitenames as $sitename) {
+                            echo $sitename[0];
                         }
+                    } else {
+                        echo substr(setting('site_name'), 0, 2);
                     }
+                }
                 ?>
             </a>
         </div>

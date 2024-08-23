@@ -11,6 +11,7 @@ use App\Http\Resources\v1\RestaurantResource;
 use App\Http\Services\MenuItemService;
 use App\Models\Category;
 use App\Models\MenuItem;
+use App\Models\Page;
 use App\Models\Restaurant;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -148,13 +149,16 @@ class BasicController extends Controller
             ]);
         }
     }
-    public function info(): JsonResponse
+    public function info()
     {
+        $terms = Page::where('slug', 'terms-and-condition')->select('description')->get();
+        $privacy = Page::where('slug', 'privacy')->select('description')->get();
+        $about = Page::where('slug', 'about-us')->select('description')->get();
         return response()->json([
             'status' => true,
-            'policy' => 'policy will go here',
-            'about' => 'about us will go here',
-            'terms&conditions' => 'terms and conditions will go here'
+            'policy' => $privacy->pluck('description'),
+            'about' => $about->pluck('description'),
+            'terms_and_conditions' => $terms->pluck('description')
         ]);
     }
 }

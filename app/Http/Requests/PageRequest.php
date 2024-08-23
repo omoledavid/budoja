@@ -27,8 +27,8 @@ class PageRequest extends FormRequest
         return [
             'title'                  => ['required', 'string', 'max:150'],
             'description'            => ['required', 'string'],
-            'footer_menu_section_id' => ['required', 'numeric'],
-            'template_id'            => ['required', 'numeric'],
+            'footer_menu_section_id' => ['nullable', 'numeric'],
+            'template_id'            => ['nullable', 'numeric'],
             'status'                 => ['required', 'numeric'],
         ];
     }

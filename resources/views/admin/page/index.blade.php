@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 
 @section('main-content')
-  
+
   <section class="section">
         <div class="section-header">
             <h1>{{ __('levels.pages') }}</h1>
@@ -12,13 +12,13 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        @can('page_create')
-                            <div class="card-header">
-                                <a href="{{ route('admin.page.create') }}" class="btn btn-icon icon-left btn-primary"><i class="fas fa-plus"></i> {{ __('levels.add_pages') }}</a>
-                            </div>
-                        @endcan
+{{--                        @can('page_create')--}}
+{{--                            <div class="card-header">--}}
+{{--                                <a href="{{ route('admin.page.create') }}" class="btn btn-icon icon-left btn-primary"><i class="fas fa-plus"></i> {{ __('levels.add_pages') }}</a>--}}
+{{--                            </div>--}}
+{{--                        @endcan--}}
                         <div class="card-body">
-                        
+
                             <div class="table-responsive">
                                 <table class="table table-striped" id="maintable" data-url="{{ route('admin.page.get-page') }}" data-hidecolumn="{{ auth()->user()->can('page_edit') || auth()->user()->can('page_delete') }}">
                                     <thead>
