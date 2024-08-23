@@ -151,7 +151,7 @@ class BasicController extends Controller
     }
     public function info()
     {
-        $terms = Page::where('slug', 'terms-and-condition')->select('description')->get();
+        $terms = Page::where('slug', 'terms-and-conditions')->select('description')->get();
         $privacy = Page::where('slug', 'privacy')->select('description')->get();
         $about = Page::where('slug', 'about-us')->select('description')->get();
         return response()->json([

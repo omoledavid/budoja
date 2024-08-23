@@ -19,7 +19,7 @@
                             <div class="form-row">
                                 <div class="form-group col">
                                     <label>{{ __('levels.title') }}</label><span class="text-danger">*</span>
-                                    <input type="text" name="title"
+                                    <input type="text" name="title" readonly
                                         class="form-control @error('title') is-invalid @enderror"
                                         value="{{ old('title',$page->title) }}">
                                     @error('title')
