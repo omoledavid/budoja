@@ -25,8 +25,8 @@
                                         <tr>
                                             <th>{{ __('levels.id') }}</th>
                                             <th>{{ __('levels.title') }}</th>
-                                            <th>{{ __('levels.footer_menu_section') }}</th>
-                                            <th>{{ __('levels.template') }}</th>
+{{--                                            <th>{{ __('levels.footer_menu_section') }}</th>--}}
+{{--                                            <th>{{ __('levels.template') }}</th>--}}
                                             <th>{{ __('levels.status') }}</th>
                                             <th>{{ __('levels.actions') }}</th>
                                         </tr>

@@ -19,8 +19,6 @@ function load_data() {
         columns: [
             { data: 'id', name: 'id' },
             { data: 'title', name: 'title' },
-            { data: 'footer_menu_section_id', name: 'footer_menu_section_id' },
-            { data: 'template_id', name: 'template_id' },
             { data: 'status', name: 'status' },
             { data: 'action', name: 'action' },
         ],
