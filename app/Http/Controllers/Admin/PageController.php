@@ -56,7 +56,7 @@ class PageController extends BackendController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PageRequest $request)
+    public function store(PageRequest $request): \Illuminate\Http\Response
     {
         $page                         = new Page;
         $page->title                  = $request->title;
@@ -142,12 +142,6 @@ class PageController extends BackendController
                     }
 
                     return $retAction;
-                })
-                ->editColumn('footer_menu_section_id', function ($page) {
-                    return Str::limit($page->footer_menu_section->name ?? null, 30);
-                })
-                ->editColumn('template_id', function ($page) {
-                    return ucfirst($page->template->name);
                 })
                 ->editColumn('status', function ($page) {
                     return $page->status == Status::ACTIVE ? trans('statuses.'.Status::ACTIVE) : trans('statuses.'.Status::INACTIVE) ;
