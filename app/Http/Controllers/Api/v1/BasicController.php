@@ -169,6 +169,7 @@ class BasicController extends Controller
         return response()->json([
             'status' => true,
             'stripe' => [
+                'status' => true,
                 'secret' => $stripeSecret,
                 'key' => $stripeKey,
             ]
