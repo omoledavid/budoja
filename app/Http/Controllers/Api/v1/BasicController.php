@@ -13,6 +13,7 @@ use App\Models\Category;
 use App\Models\MenuItem;
 use App\Models\Page;
 use App\Models\Restaurant;
+use App\Models\Setting;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -159,6 +160,18 @@ class BasicController extends Controller
             'policy' => $privacy->pluck('description'),
             'about' => $about->pluck('description'),
             'terms_and_conditions' => $terms->pluck('description')
+        ]);
+    }
+    public function keys(): JsonResponse
+    {
+        $stripeSecret = Setting::where('key', 'stripe_secret')->first()->value;
+        $stripeKey = Setting::where('key', 'stripe_key')->first()->value;
+        return response()->json([
+            'status' => true,
+            'stripe' => [
+                'secret' => $stripeSecret,
+                'key' => $stripeKey,
+            ]
         ]);
     }
 }
