@@ -172,7 +172,10 @@ class BasicController extends Controller
                 'status' => true,
                 'secret' => $stripeSecret,
                 'key' => $stripeKey,
-            ]
+            ],
+            'paypal' => [
+                'status' => true
+            ],
         ]);
     }
 }
